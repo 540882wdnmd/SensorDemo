@@ -9,14 +9,14 @@ android {
 
     defaultConfig {
         applicationId = "com.example.sensordemo"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        dataBinding{
+        dataBinding {
             enable = true
         }
     }
@@ -40,9 +40,7 @@ android {
 }
 
 dependencies {
-
-    implementation(project(":base"))
-    implementation(project(":vbclass"))
+    implementation(libs.zephyr)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

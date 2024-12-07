@@ -1,16 +1,11 @@
 package com.example.sensordemo
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.content.Intent
 import com.example.sensordemo.databinding.ActivityMainBinding
-import com.example.vbclass.ViewBindingActivity
+import com.p1ay1s.vbclass.ViewBindingActivity
 
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     override fun ActivityMainBinding.initBinding() {
-
+        startActivity(Intent(this@MainActivity, TestActivity::class.java))
     }
-
 }
