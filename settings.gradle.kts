@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SensorDemo"
 include(":app")
+include(":base")
+include(":vbclass")
