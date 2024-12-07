@@ -1,6 +1,7 @@
 package com.example.sensordemo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -14,6 +15,7 @@ import com.p1ay1s.base.extension.toast
 import com.p1ay1s.base.extension.withPermission
 import com.p1ay1s.vbclass.ViewBindingActivity
 
+@SuppressLint("SetTextI18n")
 class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
     companion object {
         const val ALL_SENSORS = "All_Sensors"
@@ -64,7 +66,6 @@ class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
 
