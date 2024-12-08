@@ -1,21 +1,29 @@
 package com.example.sensordemo
 
-import android.content.Intent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import com.example.sensordemo.bean.PostData
+import com.example.sensordemo.bean.SensorData
 import com.example.sensordemo.databinding.ActivityMainBinding
+import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity
+import okhttp3.internal.Util
 
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
-    private var id: String? = null
+    private lateinit var  sensorManager : SensorManager
+    private var id: String = ""
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun ActivityMainBinding.initBinding() {
         viewModel = mainViewModel
         lifecycleOwner = this@MainActivity // 双向绑定
+
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
         pauseStopBtn.setOnClickListener {
             mainViewModel.startPauseTimer()
@@ -35,7 +43,17 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 pauseStopBtn.text = "Start"
                 requireID {
                     if (it) {
-                        mainViewModel.resetTimer()
+                        mainViewModel.run {
+                            resetTimer()
+                            postJsonData(
+                                PostData(
+                                    id,
+                                    mainViewModel.elapsedTime,
+                                    mainViewModel.sensorDataList,
+                                    true
+                                )
+                            )
+                        }
                         "已结束".toast()
                     } else {
                         "结束失败".toast()
@@ -44,7 +62,16 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             }
         }
 
-        startActivity(Intent(this@MainActivity, TestActivity::class.java))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerSensorListeners(mainViewModel.listener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorManager.unregisterListener(mainViewModel.listener)
     }
 
     private fun requireID(callback: (Boolean) -> Unit) {
