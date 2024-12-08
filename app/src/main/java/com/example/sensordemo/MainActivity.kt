@@ -32,11 +32,11 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             if (mainViewModel.isRunning) {
                 "请先暂停".toast()
             } else {
-                pauseStopBtn.text = "Start"
                 requireID {
                     if (it) {
                         mainViewModel.resetTimer()
                         "已结束".toast()
+                        id.toast()
                     } else {
                         "结束失败".toast()
                     }
@@ -59,7 +59,6 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setView(editText)
             .setPositiveButton("确认提交") { _, _ ->
                 id = editText.text.toString()
-                id.toast()
                 callback(true)
             }
             .setNegativeButton("取消提交") { _, _ ->
