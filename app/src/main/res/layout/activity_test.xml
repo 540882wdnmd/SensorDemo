@@ -2,10 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
     <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -102,6 +98,5 @@
 
             </LinearLayout>
         </ScrollView>
-
     </LinearLayout>
 </layout>

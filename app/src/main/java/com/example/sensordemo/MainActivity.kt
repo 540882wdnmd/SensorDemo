@@ -1,8 +1,8 @@
 package com.example.sensordemo
 
-import android.content.Intent
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import com.example.sensordemo.bean.PostData
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
@@ -16,6 +16,15 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     override fun ActivityMainBinding.initBinding() {
         viewModel = mainViewModel
         lifecycleOwner = this@MainActivity // 双向绑定
+
+        mainViewModel.postJsonData(
+            PostData(
+                "id - asd",
+                "time",
+                listOf(1.1, 0.00001, 0.22, 0.0000000000000000000002),
+                true
+            )
+        )
 
         pauseStopBtn.setOnClickListener {
             mainViewModel.startPauseTimer()
@@ -44,7 +53,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             }
         }
 
-        startActivity(Intent(this@MainActivity, TestActivity::class.java))
+//        startActivity(Intent(this@MainActivity, TestActivity::class.java))
     }
 
     private fun requireID(callback: (Boolean) -> Unit) {
