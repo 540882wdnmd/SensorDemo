@@ -42,6 +42,9 @@ android {
 dependencies {
     implementation(libs.zephyr)
 
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
