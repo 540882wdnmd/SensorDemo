@@ -2,7 +2,7 @@ package com.example.sensordemo.bean
 
 data class PostData(
     val id: String, // 学号
-    val time: Long, // 跑步时间
+    val time: String, // 跑步时间
     val data: List<SensorData>?, // 传感器数据（五秒收集一次）
     val tag: Boolean // 标记数据状态
 )

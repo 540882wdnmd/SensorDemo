@@ -24,6 +24,7 @@ import com.example.sensordemo.bean.RotationVectorComponent
 import com.example.sensordemo.bean.SensorData
 import com.example.sensordemo.util.MOTION_SENSORS
 import com.example.sensordemo.util.POSITION_SENSORS
+import com.p1ay1s.base.extension.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit
 class MainViewModel : ViewModel() {
     companion object {
         private const val REFRESH_CD = 10L // 刷新间隔
+        private const val CHECK_CD = 100L // 检查间隔
         private const val CD = 500L //收集数据的间隔时间
     }
 
@@ -54,7 +56,7 @@ class MainViewModel : ViewModel() {
     private val sensorData = SensorData()
 
     private var startTime: Long = 0
-    var elapsedTime: Long = 0
+    private var elapsedTime: Long = 0
 
     private var timerJob: Job? = null
 
@@ -70,19 +72,19 @@ class MainViewModel : ViewModel() {
 
     val listener = SensorEventListenerImpl()
 
-    val sensorDataList : MutableList<SensorData> = mutableListOf()
+    val sensorDataList: MutableList<SensorData> = mutableListOf()
 
     init {
         initSensorTimer()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var lastRecordTime = 0L
-            while (true){
+            while (true) {
                 val now = System.currentTimeMillis()
-                if (now-lastRecordTime>CD){
+                if (now - lastRecordTime >= CD) {
                     sensorDataList.add(sensorData)
                     lastRecordTime = System.currentTimeMillis()
                 }
-
+                delay(CHECK_CD)
             }
         }
     }
@@ -90,9 +92,12 @@ class MainViewModel : ViewModel() {
     fun postJsonData(postData: PostData) {
         mainModel.postJsonData(
             postData,
-            { response ->
+            { _ ->
+                "post successfully".toast()
             }, // on success
-            { code, msg -> } // on error. 状态码可空
+            { code, _ ->
+                "code: ${code.toString()}".toast()
+            } // on error. 状态码可空
         )
     }
 

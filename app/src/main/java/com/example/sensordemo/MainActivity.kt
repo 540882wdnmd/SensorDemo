@@ -1,21 +1,18 @@
 package com.example.sensordemo
 
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.bean.PostData
-import com.example.sensordemo.bean.SensorData
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity
-import okhttp3.internal.Util
 
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
-    private lateinit var  sensorManager : SensorManager
+    private lateinit var sensorManager: SensorManager
     private var id: String = ""
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
@@ -43,12 +40,13 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 pauseStopBtn.text = "Start"
                 requireID {
                     if (it) {
+                        id.toast()
                         mainViewModel.run {
                             resetTimer()
                             postJsonData(
                                 PostData(
                                     id,
-                                    mainViewModel.elapsedTime,
+                                    mainViewModel.timeString.value.toString(),
                                     mainViewModel.sensorDataList,
                                     true
                                 )
@@ -62,10 +60,6 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             }
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
         sensorManager.registerSensorListeners(mainViewModel.listener)
     }
 
@@ -86,7 +80,6 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setView(editText)
             .setPositiveButton("确认提交") { _, _ ->
                 id = editText.text.toString()
-                id.toast()
                 callback(true)
             }
             .setNegativeButton("取消提交") { _, _ ->

@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface MainService {
-    @POST("api_path")
+    @POST("post-json-data")
     fun postJsonData(
         @Body postData: PostData
     ): Call<Void>
