@@ -1,14 +1,10 @@
 package com.example.sensordemo.util
 
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
-import android.widget.EditText
-import com.example.sensordemo.TestActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 const val ALL_SENSORS = "All_Sensors"
 const val MOTION_SENSORS = "Motion_Sensors"
@@ -17,7 +13,7 @@ const val ENVIRONMENT_SENSORS = "Environment_Sensors"
 const val SUPPORT = "Support"
 
 
-fun registerSensor(sensorManager:SensorManager?,sensorEventListener:SensorEventListener){
+fun registerSensor(sensorManager: SensorManager?, sensorEventListener: SensorEventListener) {
     sensorManager?.run {
         // 加速度传感器
         // 加速度传感器=重力传感器+线性加速度传感器

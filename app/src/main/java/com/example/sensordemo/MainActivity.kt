@@ -1,6 +1,5 @@
 package com.example.sensordemo
 
-import android.content.Context
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.databinding.ActivityMainBinding
@@ -10,7 +9,7 @@ import com.p1ay1s.vbclass.ViewBindingActivity
 
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
-    private var id : String? = null
+    private var id: String? = null
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun ActivityMainBinding.initBinding() {
@@ -33,18 +32,17 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 "请先暂停".toast()
             } else {
                 pauseStopBtn.text = "Start"
-                if (requireID()){
+                if (requireID()) {
                     mainViewModel.resetTimer()
                     "已结束".toast()
-                }else{
+                } else {
                     "结束失败".toast()
                 }
             }
         }
     }
 
-
-    private fun requireID() : Boolean{
+    private fun requireID(): Boolean {
         val editText = EditText(this).also {
             it.hint = "输入学号"
         }
@@ -55,15 +53,15 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setMessage("输入学号")
             .setCancelable(true)
             .setView(editText)
-            .setNegativeButton("确认提交"){_,_->
+            .setNegativeButton("确认提交") { _, _ ->
 
                 id = editText.toString()
                 result = true
             }
-            .setPositiveButton("取消提交"){_,_->
+            .setPositiveButton("取消提交") { _, _ ->
 
                 result = false
             }.create().show()
-        return  result
+        return result
     }
 }
