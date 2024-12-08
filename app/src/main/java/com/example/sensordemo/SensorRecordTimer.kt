@@ -9,7 +9,11 @@ import android.util.Log
  */
 class SensorRecordTimer(private val cd: Long) {
     private var lastRecordTime = 0L
+    private var lastRecordedValues: FloatArray? = null
+    val values: FloatArray?
+        get() = lastRecordedValues
     private var callback: ((values: FloatArray) -> Unit)? = null
+
 
     /**
      * 达到冷却时间或选择强制记录时调用 callback
@@ -23,6 +27,7 @@ class SensorRecordTimer(private val cd: Long) {
 
             try {
                 callback?.invoke(values) // 调用回调函数
+                lastRecordedValues = values
             } catch (e: Exception) {
                 Log.e(this::class.simpleName, e.stackTrace.toString())
             }

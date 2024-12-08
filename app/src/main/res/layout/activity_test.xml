@@ -100,41 +100,6 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp" />
 
-                <TextView
-                    android:id="@+id/txt14"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
-
-                <TextView
-                    android:id="@+id/txt15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
-
-                <TextView
-                    android:id="@+id/txt16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
-
-                <TextView
-                    android:id="@+id/txt17"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
-
-                <TextView
-                    android:id="@+id/txt18"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
-
-                <TextView
-                    android:id="@+id/txt19"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp" />
             </LinearLayout>
         </ScrollView>
 

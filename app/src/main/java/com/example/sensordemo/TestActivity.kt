@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.sensordemo.databinding.ActivityTestBinding
+import com.example.sensordemo.util.registerSensorListeners
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.base.extension.withPermission
 import com.p1ay1s.vbclass.ViewBindingActivity
@@ -66,6 +67,7 @@ class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
             }
         }
 
+        sensorEventListener?.let { sensorManager?.registerSensorListeners(it) }
         initTimers()
 
         Log.d(
@@ -256,168 +258,166 @@ class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
         super.onStop()
     }
 
-    fun initTimers() {
-        binding.run {
-            timerAccelerometer.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "加速度传感器")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的加速度：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的加速度：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的加速度：")
-                    .append(values[2])
-                txt1.text = "加速度传感器(包含重力)：$sb"
-            }
-            timerAccelerometerUncalibrated.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "加速度传感器(有关偏差补偿)")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的加速度,没有任何偏差补偿：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的加速度,没有任何偏差补偿：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的加速度,没有任何偏差补偿：")
-                    .append(values[2])
-                    .append("\n沿 x 轴的加速度,并带有估算的偏差补偿：")
-                    .append(values[3])
-                    .append("\n沿 y 轴的加速度,并带有估算的偏差补偿：")
-                    .append(values[4])
-                    .append("\n沿 z 轴的加速度,并带有估算的偏差补偿：")
-                    .append(values[5])
-                txt2.text = "加速度传感器(有关偏差补偿)：$sb"
-            }
-            timerGravity.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "重力加速度传感器")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的重力：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的重力：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的重力：")
-                    .append(values[2])
-                txt3.text = "重力加速度传感器：$sb"
-            }
-            timerGyroscope.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "旋转速率传感器")
-                sb = StringBuilder()
-                    .append("\n绕 x 轴的旋转速率：")
-                    .append(values[0])
-                    .append("\n绕 y 轴的旋转速率：")
-                    .append(values[1])
-                    .append("\n绕 z 轴的旋转速率：")
-                    .append(values[2])
-                txt4.text = "旋转速率传感器：$sb"
-            }
-            timerGyroscopeUncalibrated.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "旋转速率传感器(有关漂移补偿)")
-                sb = StringBuilder()
-                    .append("\n绕 x 轴的旋转速率(无漂移补偿)：")
-                    .append(values[0])
-                    .append("\n绕 y 轴的旋转速率(无漂移补偿)：")
-                    .append(values[1])
-                    .append("\n绕 z 轴的旋转速率(无漂移补偿)：")
-                    .append(values[2])
-                    .append("\n绕 x 轴的旋转速率(估算漂移补偿)：")
-                    .append(values[3])
-                    .append("\n绕 y 轴的旋转速率(估算漂移补偿)：")
-                    .append(values[4])
-                    .append("\n绕 z 轴的旋转速率(估算漂移补偿)：")
-                    .append(values[5])
-                txt5.text = "旋转速率传感器(有关漂移补偿)：$sb"
-            }
-            timerLinearAcceleration.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "线性加速度传感器(不包含重力)")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的加速度(不包含重力)：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的加速度(不包含重力)：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的加速度(不包含重力)：")
-                    .append(values[2])
-                txt6.text = "线性加速度传感器(不包含重力)：$sb"
-            }
-            timerRotationVector.setTimerCallback { values ->
-                Log.d(MOTION_SENSORS, "三轴旋转矢量分量")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
-                    .append(values[2])
-                    .append("\n旋转矢量的标量分量 ((cos(θ/2))：")
-                    .append(values[3])
-                txt7.text = "三轴旋转矢量分量：$sb"
-            }
+    private fun initTimers() = binding.run {
+        timerAccelerometer.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "加速度传感器")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的加速度：")
+                .append(values[0])
+                .append("\n沿 y 轴的加速度：")
+                .append(values[1])
+                .append("\n沿 z 轴的加速度：")
+                .append(values[2])
+            txt1.text = "加速度传感器(包含重力)：$sb"
+        }
+        timerAccelerometerUncalibrated.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "加速度传感器(有关偏差补偿)")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的加速度,没有任何偏差补偿：")
+                .append(values[0])
+                .append("\n沿 y 轴的加速度,没有任何偏差补偿：")
+                .append(values[1])
+                .append("\n沿 z 轴的加速度,没有任何偏差补偿：")
+                .append(values[2])
+                .append("\n沿 x 轴的加速度,并带有估算的偏差补偿：")
+                .append(values[3])
+                .append("\n沿 y 轴的加速度,并带有估算的偏差补偿：")
+                .append(values[4])
+                .append("\n沿 z 轴的加速度,并带有估算的偏差补偿：")
+                .append(values[5])
+            txt2.text = "加速度传感器(有关偏差补偿)：$sb"
+        }
+        timerGravity.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "重力加速度传感器")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的重力：")
+                .append(values[0])
+                .append("\n沿 y 轴的重力：")
+                .append(values[1])
+                .append("\n沿 z 轴的重力：")
+                .append(values[2])
+            txt3.text = "重力加速度传感器：$sb"
+        }
+        timerGyroscope.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "旋转速率传感器")
+            sb = StringBuilder()
+                .append("\n绕 x 轴的旋转速率：")
+                .append(values[0])
+                .append("\n绕 y 轴的旋转速率：")
+                .append(values[1])
+                .append("\n绕 z 轴的旋转速率：")
+                .append(values[2])
+            txt4.text = "旋转速率传感器：$sb"
+        }
+        timerGyroscopeUncalibrated.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "旋转速率传感器(有关漂移补偿)")
+            sb = StringBuilder()
+                .append("\n绕 x 轴的旋转速率(无漂移补偿)：")
+                .append(values[0])
+                .append("\n绕 y 轴的旋转速率(无漂移补偿)：")
+                .append(values[1])
+                .append("\n绕 z 轴的旋转速率(无漂移补偿)：")
+                .append(values[2])
+                .append("\n绕 x 轴的旋转速率(估算漂移补偿)：")
+                .append(values[3])
+                .append("\n绕 y 轴的旋转速率(估算漂移补偿)：")
+                .append(values[4])
+                .append("\n绕 z 轴的旋转速率(估算漂移补偿)：")
+                .append(values[5])
+            txt5.text = "旋转速率传感器(有关漂移补偿)：$sb"
+        }
+        timerLinearAcceleration.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "线性加速度传感器(不包含重力)")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的加速度(不包含重力)：")
+                .append(values[0])
+                .append("\n沿 y 轴的加速度(不包含重力)：")
+                .append(values[1])
+                .append("\n沿 z 轴的加速度(不包含重力)：")
+                .append(values[2])
+            txt6.text = "线性加速度传感器(不包含重力)：$sb"
+        }
+        timerRotationVector.setTimerCallback { values ->
+            Log.d(MOTION_SENSORS, "三轴旋转矢量分量")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
+                .append(values[0])
+                .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
+                .append(values[1])
+                .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
+                .append(values[2])
+                .append("\n旋转矢量的标量分量 ((cos(θ/2))：")
+                .append(values[3])
+            txt7.text = "三轴旋转矢量分量：$sb"
+        }
 
-            timerGameRotationVector.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "游戏旋转矢量传感器")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
-                    .append(values[2])
-                txt8.text = "游戏旋转矢量传感器：$sb"
-            }
-            timerGeomagneticRotationVector.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "地磁旋转矢量传感器")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
-                    .append(values[2])
-                txt9.text = "地磁旋转矢量传感器：$sb"
-            }
-            timerMagneticField.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "地磁场强度传感器")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的地磁场强度：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的地磁场强度：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的地磁场强度：")
-                    .append(values[2])
-                txt10.text = "地磁场强度传感器：$sb"
-            }
-            timerMagneticFieldUncalibrated.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "地磁场强度传感器(有关硬铁校准)")
-                sb = StringBuilder()
-                    .append("\n沿 x 轴的地磁场强度(无硬铁校准功能)：")
-                    .append(values[0])
-                    .append("\n沿 y 轴的地磁场强度(无硬铁校准功能)：")
-                    .append(values[1])
-                    .append("\n沿 z 轴的地磁场强度(无硬铁校准功能)：")
-                    .append(values[2])
-                    .append("\n沿 x 轴的铁偏差估算：")
-                    .append(values[3])
-                    .append("\n沿 y 轴的铁偏差估算：")
-                    .append(values[4])
-                    .append("\n沿 z 轴的铁偏差估算：")
-                    .append(values[5])
-                txt11.text = "地磁场强度传感器(有关硬铁校准)：$sb"
-            }
-            timerOrientation.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "三轴角度")
-                sb = StringBuilder()
-                    .append("\n方位角(绕 z 轴的角度)：")
-                    .append(values[0])
-                    .append("\n俯仰角(绕 x 轴的角度)：")
-                    .append(values[1])
-                    .append("\n倾侧角(绕 y 轴的角度)：")
-                    .append(values[2])
-                txt12.text = "三轴角度：$sb"
-            }
-            timerProximity.setTimerCallback { values ->
-                Log.d(POSITION_SENSORS, "与物体距离 ")
-                sb = StringBuilder()
-                    .append("\n")
-                    .append(values[0])
-                txt13.text = "与物体距离：$sb"
-            }
+        timerGameRotationVector.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "游戏旋转矢量传感器")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
+                .append(values[0])
+                .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
+                .append(values[1])
+                .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
+                .append(values[2])
+            txt8.text = "游戏旋转矢量传感器：$sb"
+        }
+        timerGeomagneticRotationVector.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "地磁旋转矢量传感器")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的旋转矢量分量 (x * sin(θ/2))：")
+                .append(values[0])
+                .append("\n沿 y 轴的旋转矢量分量 (y * sin(θ/2))：")
+                .append(values[1])
+                .append("\n沿 z 轴的旋转矢量分量 (z * sin(θ/2))：")
+                .append(values[2])
+            txt9.text = "地磁旋转矢量传感器：$sb"
+        }
+        timerMagneticField.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "地磁场强度传感器")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的地磁场强度：")
+                .append(values[0])
+                .append("\n沿 y 轴的地磁场强度：")
+                .append(values[1])
+                .append("\n沿 z 轴的地磁场强度：")
+                .append(values[2])
+            txt10.text = "地磁场强度传感器：$sb"
+        }
+        timerMagneticFieldUncalibrated.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "地磁场强度传感器(有关硬铁校准)")
+            sb = StringBuilder()
+                .append("\n沿 x 轴的地磁场强度(无硬铁校准功能)：")
+                .append(values[0])
+                .append("\n沿 y 轴的地磁场强度(无硬铁校准功能)：")
+                .append(values[1])
+                .append("\n沿 z 轴的地磁场强度(无硬铁校准功能)：")
+                .append(values[2])
+                .append("\n沿 x 轴的铁偏差估算：")
+                .append(values[3])
+                .append("\n沿 y 轴的铁偏差估算：")
+                .append(values[4])
+                .append("\n沿 z 轴的铁偏差估算：")
+                .append(values[5])
+            txt11.text = "地磁场强度传感器(有关硬铁校准)：$sb"
+        }
+        timerOrientation.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "三轴角度")
+            sb = StringBuilder()
+                .append("\n方位角(绕 z 轴的角度)：")
+                .append(values[0])
+                .append("\n俯仰角(绕 x 轴的角度)：")
+                .append(values[1])
+                .append("\n倾侧角(绕 y 轴的角度)：")
+                .append(values[2])
+            txt12.text = "三轴角度：$sb"
+        }
+        timerProximity.setTimerCallback { values ->
+            Log.d(POSITION_SENSORS, "与物体距离 ")
+            sb = StringBuilder()
+                .append("\n")
+                .append(values[0])
+            txt13.text = "与物体距离：$sb"
         }
     }
 

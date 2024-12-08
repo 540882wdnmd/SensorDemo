@@ -1,5 +1,6 @@
 package com.example.sensordemo
 
+import android.content.Intent
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.databinding.ActivityMainBinding
@@ -32,36 +33,37 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 "请先暂停".toast()
             } else {
                 pauseStopBtn.text = "Start"
-                if (requireID()) {
-                    mainViewModel.resetTimer()
-                    "已结束".toast()
-                } else {
-                    "结束失败".toast()
+                requireID {
+                    if (it) {
+                        mainViewModel.resetTimer()
+                        "已结束".toast()
+                    } else {
+                        "结束失败".toast()
+                    }
                 }
             }
         }
+
+        startActivity(Intent(this@MainActivity, TestActivity::class.java))
     }
 
-    private fun requireID(): Boolean {
+    private fun requireID(callback: (Boolean) -> Unit) {
         val editText = EditText(this).also {
-            it.hint = "输入学号"
+            it.hint = "输入学号 - hint"
         }
-        var result = false
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("输入学号")
-            .setMessage("输入学号")
+            .setTitle("输入学号 - title")
+            .setMessage("输入学号 - msg")
             .setCancelable(true)
             .setView(editText)
-            .setNegativeButton("确认提交") { _, _ ->
-
-                id = editText.toString()
-                result = true
+            .setPositiveButton("确认提交") { _, _ ->
+                id = editText.text.toString()
+                id.toast()
+                callback(true)
             }
-            .setPositiveButton("取消提交") { _, _ ->
-
-                result = false
+            .setNegativeButton("取消提交") { _, _ ->
+                callback(false)
             }.create().show()
-        return result
     }
 }
