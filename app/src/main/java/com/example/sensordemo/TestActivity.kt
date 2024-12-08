@@ -380,9 +380,9 @@ class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
                         sb = StringBuilder()
                             .append("\n沿 x 轴的地磁场强度：")
                             .append(values[0])
-                            .append("\n沿 x 轴的地磁场强度：")
+                            .append("\n沿 y 轴的地磁场强度：")
                             .append(values[1])
-                            .append("\n沿 x 轴的地磁场强度：")
+                            .append("\n沿 z 轴的地磁场强度：")
                             .append(values[2])
                         txt11.text = "地磁场强度传感器：$sb"
                     }
