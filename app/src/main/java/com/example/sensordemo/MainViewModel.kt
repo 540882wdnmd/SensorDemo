@@ -32,7 +32,8 @@ class MainViewModel : ViewModel() {
     private val mainModel: MainModel by lazy { MainModel() }
 
     fun postJsonData(json: String) {
-        mainModel.postJsonData(json,
+        mainModel.postJsonData(
+            json,
             { response ->
             }, // on success
             { code, msg -> } // on error. 状态码可空
