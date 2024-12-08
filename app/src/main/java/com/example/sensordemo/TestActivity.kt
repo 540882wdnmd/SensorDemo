@@ -23,10 +23,44 @@ class TestActivity : ViewBindingActivity<ActivityTestBinding>() {
         const val POSITION_SENSORS = "Position_Sensors"
         const val ENVIRONMENT_SENSORS = "Environment_Sensors"
         const val SUPPORT = "Support"
+
+        const val CD = 5000L
     }
 
     private var sensorManager: SensorManager? = null // 在类中创建SensorManager传感器管理器
     private var sensorEventListener: SensorEventListenerImpl? = null
+
+
+    // TODO 假想的用例
+    lateinit var timer_TYPE_ACCELEROMETER: SensorRecordTimer
+    // 其他的 timer
+
+    fun initTimers_Example() {
+        timer_TYPE_ACCELEROMETER = SensorRecordTimer(CD)
+        timer_TYPE_ACCELEROMETER.callback = { values ->
+            Log.d(MOTION_SENSORS, "加速度传感器")
+            val sb = StringBuilder()
+                .append("\n沿 x 轴的加速度：")
+                .append(values[0])
+                .append("\n沿 y 轴的加速度：")
+                .append(values[1])
+                .append("\n沿 z 轴的加速度：")
+                .append(values[2])
+            binding.txt1.text = "加速度传感器(包含重力)：$sb"
+        }
+        // 其他 timer
+    }
+
+    fun onSensorChanged_Example(event: SensorEvent?) {
+        val sensorType = event?.sensor?.type ?: return
+        when (sensorType) {
+            Sensor.TYPE_ACCELEROMETER -> timer_TYPE_ACCELEROMETER.record(event.values)
+            else -> { // ... }
+            }
+        }
+    }
+    // TODO
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun ActivityTestBinding.initBinding() {

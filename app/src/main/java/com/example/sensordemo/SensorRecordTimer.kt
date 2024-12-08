@@ -7,16 +7,18 @@ package com.example.sensordemo
  */
 class SensorRecordTimer(private val cd: Long) {
     private var lastRecordTime = System.currentTimeMillis()
-    var callback: (() -> Unit)? = null
+    var callback: ((values: FloatArray) -> Unit)? = null
 
     /**
      * 达到冷却时间或选择强制记录时调用 callback
+     * @param values 传入 event?.values 即可
      */
-    fun record(force: Boolean = false) {
+    fun record(values: FloatArray?, force: Boolean = false) {
         val now = System.currentTimeMillis()
         if (force || now - lastRecordTime >= cd) {
             lastRecordTime = System.currentTimeMillis() // 更新最后的记录时间戳
-            callback?.invoke() // 调用回调函数
+            if (values != null)
+                callback?.invoke(values) // 调用回调函数
         }
     }
 }
