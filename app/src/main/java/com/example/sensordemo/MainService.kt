@@ -1,14 +1,15 @@
 package com.example.sensordemo
 
+import com.example.sensordemo.bean.PostData
 import retrofit2.Call
-import retrofit2.http.Field
+import retrofit2.http.Body
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface MainService {
-    @POST("asd")
+    @POST("api_path")
     @FormUrlEncoded
     fun postJsonData(
-        @Field("json") json: String
-    ): Call<String> // String 暂定, 后面可以换成别的 dataclass
+        @Body postData: PostData
+    ): Call<Void>
 }

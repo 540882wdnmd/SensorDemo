@@ -8,6 +8,7 @@ data class PostData(
 )
 
 data class SensorData(
+    val time : Long,
     val accelerometer: Accelerometer, //加速度（包含重力）
     val accNoBiasComp: AccNoBiasComp, //加速度（没有偏差补偿）
     val accWithEstBiasComp: AccWithEstBiasComp, //加速度（估算偏差补偿）
