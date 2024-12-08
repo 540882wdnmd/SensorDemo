@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sensordemo.bean.PostData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -31,9 +32,9 @@ class MainViewModel : ViewModel() {
 
     private val mainModel: MainModel by lazy { MainModel() }
 
-    fun postJsonData(json: String) {
+    fun postJsonData(postData: PostData) {
         mainModel.postJsonData(
-            json,
+            postData,
             { response ->
             }, // on success
             { code, msg -> } // on error. 状态码可空
