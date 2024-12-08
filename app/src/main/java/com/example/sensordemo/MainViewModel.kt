@@ -29,6 +29,16 @@ class MainViewModel : ViewModel() {
     val timeString: LiveData<String>
         get() = _timeString
 
+    private val mainModel: MainModel by lazy { MainModel() }
+
+    fun postJsonData(json: String) {
+        mainModel.postJsonData(json,
+            { response ->
+            }, // on success
+            { code, msg -> } // on error. 状态码可空
+        )
+    }
+
     fun startPauseTimer() {
         if (isRunning)
             pauseTimer()
