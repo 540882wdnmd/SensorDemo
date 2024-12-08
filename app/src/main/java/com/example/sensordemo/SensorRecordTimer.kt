@@ -1,13 +1,15 @@
 package com.example.sensordemo
 
+import android.util.Log
+
 /**
  * 用于约束记录的频次
  * 具体的记录逻辑可通过 callback 设置
  * @param cd 规定的冷却时间(多久允许记录一次)
  */
 class SensorRecordTimer(private val cd: Long) {
-    private var lastRecordTime = System.currentTimeMillis()
-    var callback: ((values: FloatArray) -> Unit)? = null
+    private var lastRecordTime = 0L
+    private var callback: ((values: FloatArray) -> Unit)? = null
 
     /**
      * 达到冷却时间或选择强制记录时调用 callback
@@ -17,8 +19,17 @@ class SensorRecordTimer(private val cd: Long) {
         val now = System.currentTimeMillis()
         if (force || now - lastRecordTime >= cd) {
             lastRecordTime = System.currentTimeMillis() // 更新最后的记录时间戳
-            if (values != null)
+            if (values == null) return
+
+            try {
                 callback?.invoke(values) // 调用回调函数
+            } catch (e: Exception) {
+                Log.e(this::class.simpleName, e.stackTrace.toString())
+            }
         }
+    }
+
+    fun setTimerCallback(callback: ((values: FloatArray) -> Unit)?) {
+        this.callback = callback
     }
 }

@@ -1,5 +1,6 @@
 package com.example.sensordemo
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.p1ay1s.base.extension.toast
@@ -33,5 +34,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 pauseStopBtn.text = "Start"
             }
         }
+
+        startActivity(Intent(this@MainActivity, TestActivity::class.java))
     }
 }
