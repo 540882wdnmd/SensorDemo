@@ -1,12 +1,9 @@
 package com.example.sensordemo
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.p1ay1s.base.extension.TAG
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,54 +12,74 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainViewModel : ViewModel() {
-    var isRunning = false
-    private var elapsedTime = 0L
-    private val _timeString = MutableLiveData<String>()
-    val timeString: LiveData<String>
-        get() = _timeString
+    companion object {
+        const val REFRESH_CD = 10L // 刷新间隔
+    }
+
+    private var startTime: Long = 0
+    private var elapsedTime: Long = 0
 
     private var timerJob: Job? = null
 
+    private var _isRunning: Boolean = false
+    val isRunning: Boolean
+        get() = _isRunning
+
+    private val _timeString = MutableLiveData("00:00:00.000")
+    val timeString: LiveData<String>
+        get() = _timeString
+
     fun startPauseTimer() {
-        if (isRunning) {
-            isRunning = false
-            timerJob?.cancel()
-        } else {
-            isRunning = true
-            timerJob = CoroutineScope(Dispatchers.Main).launch {
-                try {
-                    while (isRunning) {
-                        elapsedTime += 1000
-                        val timeText = elapsedTime.toTimeFormat()
-                        _timeString.value = timeText
-                        Log.d(TAG, "计时成功$elapsedTime")
-                        delay(1000)
-                    }
-                } catch (e: CancellationException) {
-                    Log.d(TAG, e.toString())
-                }
+        if (isRunning)
+            pauseTimer()
+        else
+            startTimer()
+    }
+
+    private fun startTimer() {
+        if (_isRunning) return
+
+        _isRunning = true
+        // 改用时间戳计算, 可以精确至毫秒
+        startTime = System.currentTimeMillis() - elapsedTime // 减去 elapsedTime 以继续未结束的计时
+        timerJob = viewModelScope.launch(Dispatchers.Main) {
+            while (true) {
+                elapsedTime = System.currentTimeMillis() - startTime
+                _timeString.value = elapsedTime.toTimeFormat()
+                delay(REFRESH_CD)
             }
         }
     }
 
-    fun resetTimer() {
-        isRunning = false
-        elapsedTime = 0
-        _timeString.value = "00:00:00"
+    private fun pauseTimer() {
+        if (!_isRunning) return
+
+        _isRunning = false
         timerJob?.cancel()
+    }
+
+    fun resetTimer() {
+        if (_isRunning) return
+
+        timerJob?.cancel()
+        startTime = 0
+        elapsedTime = 0
+        _timeString.value = "00:00:00.000"
     }
 
     private fun Long.toTimeFormat(): String {
         val hours = TimeUnit.MILLISECONDS.toHours(this)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
         val seconds = TimeUnit.MILLISECONDS.toSeconds(this) % 60
-        Log.d(TAG, "toTimeFormat:$hours:$minutes:$seconds")
+        val milliseconds = this % 1000
+
         return String.format(
-            Locale.US,
-            "%02d:%02d:%02d",
+            Locale.CHINA,
+            "%02d:%02d:%02d.%03d",
             hours,
             minutes,
-            seconds
+            seconds,
+            milliseconds
         )
     }
 }
