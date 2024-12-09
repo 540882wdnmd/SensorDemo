@@ -27,7 +27,6 @@ import com.example.sensordemo.bean.RotationVectorComponent
 import com.example.sensordemo.bean.SensorData
 import com.example.sensordemo.util.MOTION_SENSORS
 import com.example.sensordemo.util.POSITION_SENSORS
-import com.p1ay1s.base.extension.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -75,14 +74,14 @@ class MainViewModel : ViewModel() {
 
     val listener = SensorEventListenerImpl()
 
-    var sensorDataList: MutableList<SensorData> = mutableListOf()
+    private var sensorDataList: MutableList<SensorData> = mutableListOf()
 
     init {
         initSensorTimer()
         viewModelScope.launch(Dispatchers.IO) {
             var lastRecordTime = 0L
             while (true) {
-                if (isRunning){
+                if (isRunning) {
                     val now = System.currentTimeMillis()
                     if (now - lastRecordTime >= CD) {
                         sensorDataList.add(sensorData)
@@ -94,7 +93,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun postJsonData(id: String) {
+    fun postJsonData(id: String, callback: (Boolean, Int?) -> Unit) {
         val postData = PostData(
             id,
             timeString.value.toString(),
@@ -104,13 +103,16 @@ class MainViewModel : ViewModel() {
         mainModel.postJsonData(
             postData,
             { _ ->
-                "post successfully".toast()
-                sensorDataList = mutableListOf()
+                callback(true, 200)
             }, // on success
             { code, _ ->
-                "code: ${code.toString()}".toast()
+                callback(false, code)
             } // on error. 状态码可空
         )
+    }
+
+    fun cleanDataList() {
+        sensorDataList = mutableListOf()
     }
 
     fun startPauseTimer() {

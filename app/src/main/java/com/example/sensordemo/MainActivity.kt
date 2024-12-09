@@ -3,7 +3,6 @@ package com.example.sensordemo
 import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
-import com.example.sensordemo.bean.PostData
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -40,10 +39,17 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 pauseStopBtn.text = "Start"
                 requireID {
                     if (it) {
-                        id.toast()
-                        mainViewModel.run {
-                            resetTimer() // todo 使网络请求成功后再重置
-                            postJsonData(id)
+//                        id.toast()
+                        mainViewModel.postJsonData(id) { isSuccess, code ->
+                            if (isSuccess) {
+                                "提交成功".toast()
+                                mainViewModel.run {
+                                    resetTimer()
+                                    cleanDataList()
+                                }
+                            } else {
+                                "提交失败, 状态码为: ${code.toString()}".toast()
+                            }
                         }
                         "已结束".toast()
                     } else {
