@@ -7,7 +7,6 @@ pluginManagement {
         maven { url = uri("https://maven.aliyun.com/repository/google") }
         maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
         maven { url = uri("https://maven.aliyun.com/repository/public") }
-        maven { url = uri("https://github.com/p1ay1s/Zephyr") }
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -23,7 +22,6 @@ dependencyResolutionManagement {
         maven { url = uri("https://maven.aliyun.com/repository/google") }
         maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
         maven { url = uri("https://maven.aliyun.com/repository/public") }
-        maven { url = uri("https://github.com/p1ay1s/Zephyr") }
         google()
         mavenCentral()
         gradlePluginPortal()

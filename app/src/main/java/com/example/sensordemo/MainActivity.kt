@@ -42,15 +42,8 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                     if (it) {
                         id.toast()
                         mainViewModel.run {
-                            resetTimer()
-                            postJsonData(
-                                PostData(
-                                    id,
-                                    mainViewModel.timeString.value.toString(),
-                                    mainViewModel.sensorDataList,
-                                    true
-                                )
-                            )
+                            resetTimer() // todo 使网络请求成功后再重置
+                            postJsonData(id)
                         }
                         "已结束".toast()
                     } else {

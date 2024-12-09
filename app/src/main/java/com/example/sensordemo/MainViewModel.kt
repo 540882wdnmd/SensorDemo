@@ -72,7 +72,7 @@ class MainViewModel : ViewModel() {
 
     val listener = SensorEventListenerImpl()
 
-    val sensorDataList: MutableList<SensorData> = mutableListOf()
+    var sensorDataList: MutableList<SensorData> = mutableListOf()
 
     init {
         initSensorTimer()
@@ -89,11 +89,18 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun postJsonData(postData: PostData) {
+    fun postJsonData(id: String) {
+        val postData = PostData(
+            id,
+            timeString.value.toString(),
+            sensorDataList,
+            true
+        )
         mainModel.postJsonData(
             postData,
             { _ ->
                 "post successfully".toast()
+                sensorDataList = mutableListOf()
             }, // on success
             { code, _ ->
                 "code: ${code.toString()}".toast()
