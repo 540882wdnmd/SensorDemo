@@ -15,15 +15,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:backgroundTint="@color/milky"
         tools:context=".MainActivity">
 
         <TextView
             android:id="@+id/time_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
             android:layout_marginTop="100dp"
+            android:gravity="start"
+            android:maxLines="1"
             android:text="@{viewModel.timeString}"
-            android:textColor="@color/black"
+            android:textColor="@color/green"
             android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/black"
+            android:textColor="@color/dark_green"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +49,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="50dp"
+            android:backgroundTint="@color/dark_green"
             android:text="开始"
+            android:textColor="@color/milky"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -54,7 +60,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="50dp"
+            android:backgroundTint="@color/dark_green"
             android:text="停止"
+            android:textColor="@color/milky"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

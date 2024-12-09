@@ -1,17 +1,22 @@
 package com.example.sensordemo
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.MainViewModel.Companion.CD
 import com.example.sensordemo.databinding.ActivityMainBinding
-import com.example.sensordemo.ui.LoadingDialog
+import com.example.sensordemo.databinding.LayoutLoadingBinding
+import com.example.sensordemo.util.cancelToast
 import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity
+import com.p1ay1s.vbclass.ui.ViewBindingDialog
+
+class LoadingDialog(context: Context) : ViewBindingDialog<LayoutLoadingBinding>(context)
 
 @SuppressLint("SetTextI18n")
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
@@ -21,6 +26,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     private lateinit var dialog: LoadingDialog
+    private var isShowing = false
 
     override fun ActivityMainBinding.initBinding() {
         enableEdgeToEdge()
@@ -32,43 +38,44 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
         cdTv.text = "当前记录间隔: 每${CD}毫秒"
+        sensorManager.registerSensorListeners(mainViewModel.listener)
 
-        pauseStopBtn.setOnClickListener {
-            mainViewModel.startPauseTimer()
-            if (mainViewModel.isRunning) {
-                pauseStopBtn.text = "暂停"
-                "开始计时".toast()
-            } else {
-                pauseStopBtn.text = "开始"
-                "暂停计时".toast()
+        mainViewModel.apply {
+            pauseStopBtn.setOnClickListener {
+                startPauseTimer()
+                pauseStopBtn.text = if (isRunning) "暂停" else "开始"
             }
-        }
 
-        finishBtn.setOnClickListener {
-            if (mainViewModel.isRunning) {
-                "请先暂停".toast()
-            } else {
+            finishBtn.setOnClickListener {
+                if (isRunning) {
+                    cancelToast()
+                    "请先暂停".toast()
+                    return@setOnClickListener
+                }
+
                 requireID {
-                    if (it) {
-                        dialog.show()
-                        mainViewModel.postJsonData(id) { isSuccess, msg ->
-                            dialog.hide()
-                            if (isSuccess) {
-                                "提交成功".toast()
-                                mainViewModel.run {
-                                    resetTimer()
-                                    cleanDataList()
-                                }
-                            } else {
-                                "提交失败, 原因: $msg".toast()
-                            }
+                    dialog.show()
+
+                    postJsonData(id) { isSuccess, msg ->
+                        dialog.hide()
+                        if (isSuccess) {
+                            resetTimer()
+                            cleanDataList()
+
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("上传的 json 预览")
+                                .setMessage(msg)
+                                .setCancelable(true)
+                                .setPositiveButton("确认") { _, _ ->
+                                }.create().show()
+                        } else {
+                            cancelToast()
+                            "提交失败: $msg".toast()
                         }
                     }
                 }
             }
         }
-
-        sensorManager.registerSensorListeners(mainViewModel.listener)
     }
 
     override fun onDestroy() {
@@ -76,7 +83,13 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
         sensorManager.unregisterListener(mainViewModel.listener)
     }
 
-    private fun requireID(callback: (Boolean) -> Unit) {
+    /**
+     * 仅满足上传条件才回调
+     */
+    private fun requireID(callback: () -> Unit) {
+        if (isShowing) return
+        isShowing = true
+
         val editText = EditText(this).also {
             it.hint = "请输入学号"
         }
@@ -89,16 +102,23 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setPositiveButton("确认") { _, _ ->
                 val str = editText.text
                 if (str.isNullOrEmpty()) {
-                    callback(false)
+                    cancelToast()
                     "学号不可留空, 请重新提交".toast()
                 } else {
                     id = editText.text.toString()
-                    callback(true)
+                    callback()
                 }
+                isShowing = false
             }
             .setNegativeButton("取消") { _, _ ->
-                callback(false)
+                cancelToast()
                 "已取消提交".toast()
+                isShowing = false
+            }
+            .setOnCancelListener {
+                cancelToast()
+                "已取消提交".toast()
+                isShowing = false
             }.create().show()
     }
 }

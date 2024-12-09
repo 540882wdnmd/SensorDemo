@@ -14,6 +14,8 @@ data class PostData(
 )
 
 data class SensorData(
+    @SerializedName("时间点")
+    var time: Long? = null,
     @SerializedName("加速度 (包含重力)")
     var accelerometer: Accelerometer? = null, // 加速度 (包含重力)
     @SerializedName("加速度 (没有偏差补偿)")

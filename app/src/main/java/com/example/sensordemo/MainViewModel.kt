@@ -28,6 +28,7 @@ import com.example.sensordemo.bean.SensorData
 import com.example.sensordemo.util.MOTION_SENSORS
 import com.example.sensordemo.util.POSITION_SENSORS
 import com.example.sensordemo.util.SensorRecordTimer
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -85,6 +86,8 @@ class MainViewModel : ViewModel() {
                 if (isRunning) {
                     val now = System.currentTimeMillis()
                     if (now - lastRecordTime >= CD) {
+                        sensorData.time = System.currentTimeMillis()
+//                        sensorData.time = LocalTime.now().toString()
                         sensorDataList.add(sensorData)
                         lastRecordTime = System.currentTimeMillis()
                     }
@@ -108,10 +111,11 @@ class MainViewModel : ViewModel() {
         mainModel.postJsonData(
             postData,
             { _ ->
-                callback(true, "200")
+                callback(true, Gson().toJson(postData))
             }, // on success
             { code, _ ->
-                callback(false, code.toString())
+                val msg = code ?: "请求超时"
+                callback(false, msg.toString())
             } // on error. 状态码可空
         )
     }
