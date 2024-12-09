@@ -9,8 +9,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sensordemo.bean.AccNoBiasComp
+import com.example.sensordemo.bean.AccWithEstBiasComp
 import com.example.sensordemo.bean.Accelerometer
 import com.example.sensordemo.bean.GameRotationVector
+import com.example.sensordemo.bean.GeoIntHardBiasEst
 import com.example.sensordemo.bean.GeoIntUncal
 import com.example.sensordemo.bean.GeomagneticIntensity
 import com.example.sensordemo.bean.GeomagneticRotationVector
@@ -19,6 +21,7 @@ import com.example.sensordemo.bean.LinearAcceleration
 import com.example.sensordemo.bean.Orientation
 import com.example.sensordemo.bean.PostData
 import com.example.sensordemo.bean.RotRateNoDriftComp
+import com.example.sensordemo.bean.RotRateWithEstDriftComp
 import com.example.sensordemo.bean.RotationRate
 import com.example.sensordemo.bean.RotationVectorComponent
 import com.example.sensordemo.bean.SensorData
@@ -79,12 +82,14 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             var lastRecordTime = 0L
             while (true) {
-                val now = System.currentTimeMillis()
-                if (now - lastRecordTime >= CD) {
-                    sensorDataList.add(sensorData)
-                    lastRecordTime = System.currentTimeMillis()
+                if (isRunning){
+                    val now = System.currentTimeMillis()
+                    if (now - lastRecordTime >= CD) {
+                        sensorDataList.add(sensorData)
+                        lastRecordTime = System.currentTimeMillis()
+                    }
+                    delay(CHECK_CD)
                 }
-                delay(CHECK_CD)
             }
         }
     }
@@ -137,6 +142,7 @@ class MainViewModel : ViewModel() {
         startTime = 0
         elapsedTime = 0
         _timeString.value = "00:00:00.000"
+        sensorDataList.clear()
     }
 
     private fun Long.toTimeFormat(): String {
@@ -158,7 +164,7 @@ class MainViewModel : ViewModel() {
     /*
       定时收集传感器数据
        */
-    fun initSensorTimer() {
+    private fun initSensorTimer() {
         timerAccelerometer.setTimerCallback { values ->
             sensorData.accelerometer = Accelerometer(
                 values[0],
@@ -172,6 +178,11 @@ class MainViewModel : ViewModel() {
                 values[0],
                 values[1],
                 values[2]
+            )
+            sensorData.accWithEstBiasComp = AccWithEstBiasComp(
+                values[3],
+                values[4],
+                values[5]
             )
         }
 
@@ -196,6 +207,11 @@ class MainViewModel : ViewModel() {
                 values[0],
                 values[1],
                 values[2]
+            )
+            sensorData.rotRateWithEstDriftComp = RotRateWithEstDriftComp(
+                values[3],
+                values[4],
+                values[5]
             )
         }
 
@@ -245,6 +261,11 @@ class MainViewModel : ViewModel() {
                 values[0],
                 values[1],
                 values[2]
+            )
+            sensorData.geoIntHardBiasEst = GeoIntHardBiasEst(
+                values[3],
+                values[4],
+                values[5]
             )
         }
 

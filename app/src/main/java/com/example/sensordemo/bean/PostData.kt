@@ -10,18 +10,18 @@ data class PostData(
 data class SensorData(
     var accelerometer: Accelerometer? = null, // 加速度（包含重力）
     var accNoBiasComp: AccNoBiasComp? = null, // 加速度（没有偏差补偿）
-    val accWithEstBiasComp: AccWithEstBiasComp? = null, // 加速度（估算偏差补偿）
+    var accWithEstBiasComp: AccWithEstBiasComp? = null, // 加速度（估算偏差补偿）
     var gravityAcceleration: GravityAcceleration? = null, // 重力加速度
     var rotationRate: RotationRate? = null, // 旋转速率
     var rotRateNoDriftComp: RotRateNoDriftComp? = null, // 旋转速率（无漂移补偿）
-    val rotRateWithEstDriftComp: RotRateWithEstDriftComp? = null, // 旋转速率（估算漂移补偿）
+    var rotRateWithEstDriftComp: RotRateWithEstDriftComp? = null, // 旋转速率（估算漂移补偿）
     var linearAcceleration: LinearAcceleration? = null, // 线性加速度
     var rotationVectorComponent: RotationVectorComponent? = null, // 旋转矢量分量
     var gameRotationVector: GameRotationVector? = null, // 游戏旋转矢量
     var geomagneticRotationVector: GeomagneticRotationVector? = null, // 地磁旋转矢量
     var geomagneticIntensity: GeomagneticIntensity? = null, // 地磁强度
     var geoIntUncal: GeoIntUncal? = null, // 地磁强度无硬铁校准
-    val geoIntHardBiasEst: GeoIntHardBiasEst? = null, // 地磁强度硬铁估算
+    var geoIntHardBiasEst: GeoIntHardBiasEst? = null, // 地磁强度硬铁估算
     var orientation: Orientation? = null, // 方位角
     var proximity: Float? = null // 与物体距离
 )
