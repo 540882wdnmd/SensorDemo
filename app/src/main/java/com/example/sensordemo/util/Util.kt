@@ -1,19 +1,14 @@
 package com.example.sensordemo.util
 
 import android.hardware.Sensor
-import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
-import com.example.sensordemo.SensorRecordTimer
 
 const val ALL_SENSORS = "All_Sensors"
 const val MOTION_SENSORS = "Motion_Sensors"
 const val POSITION_SENSORS = "Position_Sensors"
 const val ENVIRONMENT_SENSORS = "Environment_Sensors"
 const val SUPPORT = "Support"
-
-
 
 fun SensorManager.registerSensorListeners(listener: SensorEventListener?) {
     // 加速度传感器

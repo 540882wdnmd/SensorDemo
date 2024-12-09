@@ -1,4 +1,4 @@
-package com.example.sensordemo
+package com.example.sensordemo.util
 
 import android.util.Log
 

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.MainViewModel.Companion.CD
 import com.example.sensordemo.databinding.ActivityMainBinding
+import com.example.sensordemo.ui.LoadingDialog
 import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
@@ -19,8 +20,11 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     private var id: String = "未设置"
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
+    private lateinit var dialog: LoadingDialog
+
     override fun ActivityMainBinding.initBinding() {
         enableEdgeToEdge()
+        dialog = LoadingDialog(this@MainActivity)
 
         viewModel = mainViewModel
         lifecycleOwner = this@MainActivity // 双向绑定
@@ -46,7 +50,9 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             } else {
                 requireID {
                     if (it) {
+                        dialog.show()
                         mainViewModel.postJsonData(id) { isSuccess, msg ->
+                            dialog.hide()
                             if (isSuccess) {
                                 "提交成功".toast()
                                 mainViewModel.run {
