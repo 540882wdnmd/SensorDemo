@@ -9,5 +9,5 @@ interface MainService {
     @POST("post-json-data")
     fun postJsonData(
         @Body postData: PostData
-    ): Call<Void>
+    ): Call<Int>
 }

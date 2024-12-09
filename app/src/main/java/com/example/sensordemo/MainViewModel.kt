@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
     companion object {
         private const val REFRESH_CD = 10L // 刷新间隔
         private const val CHECK_CD = 100L // 检查间隔
-        private const val CD = 500L //收集数据的间隔时间
+         const val CD = 500L //收集数据的间隔时间
     }
 
     private val timerAccelerometer = SensorRecordTimer(CD)

@@ -9,7 +9,7 @@ class MainModel {
 
     inline fun postJsonData(
         postData : PostData,
-        crossinline onSuccess: (Void) -> Unit,
+        crossinline onSuccess: (Int) -> Unit,
         crossinline onError: (Int?, String) -> Unit
     ) = requestEnqueue(mainService.postJsonData(postData), onSuccess, onError)
 }

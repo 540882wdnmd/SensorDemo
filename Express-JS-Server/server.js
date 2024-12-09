@@ -20,7 +20,7 @@ app.post('/post-json-data', (req, res) => {
   console.log('Received json:', JSON.stringify(postData, null, 2));
 
   // 返回成功响应
-  res.sendStatus(200);
+  res.status(200).json(200);
 });
 
 app.listen(port, () => {

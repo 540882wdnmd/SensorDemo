@@ -1,18 +1,21 @@
 package com.example.sensordemo
 
+import android.annotation.SuppressLint
 import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import com.example.sensordemo.MainViewModel.Companion.CD
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity
 
+@SuppressLint("SetTextI18n")
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
     private lateinit var sensorManager: SensorManager
-    private var id: String = ""
+    private var id: String = "未设置"
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun ActivityMainBinding.initBinding() {
@@ -21,13 +24,15 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
+        cdTv.text = "当前记录间隔: 每${CD}毫秒"
+
         pauseStopBtn.setOnClickListener {
             mainViewModel.startPauseTimer()
             if (mainViewModel.isRunning) {
-                pauseStopBtn.text = "Pause"
+                pauseStopBtn.text = "暂停"
                 "开始计时".toast()
             } else {
-                pauseStopBtn.text = "Start"
+                pauseStopBtn.text = "开始"
                 "暂停计时".toast()
             }
         }
@@ -36,10 +41,8 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             if (mainViewModel.isRunning) {
                 "请先暂停".toast()
             } else {
-                pauseStopBtn.text = "Start"
                 requireID {
                     if (it) {
-//                        id.toast()
                         mainViewModel.postJsonData(id) { isSuccess, code ->
                             if (isSuccess) {
                                 "提交成功".toast()
@@ -51,9 +54,8 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                                 "提交失败, 状态码为: ${code.toString()}".toast()
                             }
                         }
-                        "已结束".toast()
                     } else {
-                        "结束失败".toast()
+                        "已取消提交".toast()
                     }
                 }
             }
@@ -69,19 +71,19 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
     private fun requireID(callback: (Boolean) -> Unit) {
         val editText = EditText(this).also {
-            it.hint = "输入学号 - hint"
+            it.hint = "请输入学号"
         }
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("输入学号 - title")
-            .setMessage("输入学号 - msg")
+            .setTitle("数据提交")
+            .setMessage("输入你的学号")
             .setCancelable(true)
             .setView(editText)
-            .setPositiveButton("确认提交") { _, _ ->
+            .setPositiveButton("确认") { _, _ ->
                 id = editText.text.toString()
                 callback(true)
             }
-            .setNegativeButton("取消提交") { _, _ ->
+            .setNegativeButton("取消") { _, _ ->
                 callback(false)
             }.create().show()
     }
