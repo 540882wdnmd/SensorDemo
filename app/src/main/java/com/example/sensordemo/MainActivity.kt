@@ -46,7 +46,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             } else {
                 requireID {
                     if (it) {
-                        mainViewModel.postJsonData(id) { isSuccess, code ->
+                        mainViewModel.postJsonData(id) { isSuccess, msg ->
                             if (isSuccess) {
                                 "提交成功".toast()
                                 mainViewModel.run {
@@ -54,7 +54,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                                     cleanDataList()
                                 }
                             } else {
-                                "提交失败, 状态码为: ${code.toString()}".toast()
+                                "提交失败, 原因: $msg".toast()
                             }
                         }
                     }

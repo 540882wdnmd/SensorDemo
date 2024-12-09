@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
     companion object {
         private const val REFRESH_CD = 10L // 刷新间隔
         private const val CHECK_CD = 100L // 检查间隔
-         const val CD = 500L //收集数据的间隔时间
+        const val CD = 500L //收集数据的间隔时间
     }
 
     private val timerAccelerometer = SensorRecordTimer(CD)
@@ -93,7 +93,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun postJsonData(id: String, callback: (Boolean, Int?) -> Unit) {
+    fun postJsonData(id: String, callback: (Boolean, String) -> Unit) {
+        if (sensorDataList.isEmpty()) {
+            callback(false, "未收集到数据")
+            return
+        }
         val postData = PostData(
             id,
             timeString.value.toString(),
@@ -103,10 +107,10 @@ class MainViewModel : ViewModel() {
         mainModel.postJsonData(
             postData,
             { _ ->
-                callback(true, 200)
+                callback(true, "200")
             }, // on success
             { code, _ ->
-                callback(false, code)
+                callback(false, code.toString())
             } // on error. 状态码可空
         )
     }
