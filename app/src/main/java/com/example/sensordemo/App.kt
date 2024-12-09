@@ -12,7 +12,7 @@ class App : Application() {
         super.onCreate()
         LOG_LEVEL = ERROR
         ServiceBuilder.enableLogger = true
-        appBaseUrl = "http://192.168.10.103:3000/"
+        appBaseUrl = "http://10.44.185.100:3000/"
         appContext = this
     }
 }
