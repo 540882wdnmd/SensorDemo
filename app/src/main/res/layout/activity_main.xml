@@ -14,8 +14,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:backgroundTint="@color/milky"
+        android:background="@color/milky"
         tools:context=".MainActivity">
 
         <TextView
@@ -24,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="100dp"
-            android:gravity="start"
             android:maxLines="1"
             android:text="@{viewModel.timeString}"
             android:textColor="@color/green"
