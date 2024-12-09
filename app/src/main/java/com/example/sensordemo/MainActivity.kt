@@ -3,6 +3,7 @@ package com.example.sensordemo
 import android.annotation.SuppressLint
 import android.hardware.SensorManager
 import android.widget.EditText
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.MainViewModel.Companion.CD
 import com.example.sensordemo.databinding.ActivityMainBinding
@@ -19,6 +20,8 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     private val mainViewModel by lazy { ViewModelProvider(this)[MainViewModel::class.java] }
 
     override fun ActivityMainBinding.initBinding() {
+        enableEdgeToEdge()
+
         viewModel = mainViewModel
         lifecycleOwner = this@MainActivity // 双向绑定
 
@@ -54,8 +57,6 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                                 "提交失败, 状态码为: ${code.toString()}".toast()
                             }
                         }
-                    } else {
-                        "已取消提交".toast()
                     }
                 }
             }
@@ -80,11 +81,18 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setCancelable(true)
             .setView(editText)
             .setPositiveButton("确认") { _, _ ->
-                id = editText.text.toString()
-                callback(true)
+                val str = editText.text
+                if (str.isNullOrEmpty()) {
+                    callback(false)
+                    "学号不可留空, 请重新提交".toast()
+                } else {
+                    id = editText.text.toString()
+                    callback(true)
+                }
             }
             .setNegativeButton("取消") { _, _ ->
                 callback(false)
+                "已取消提交".toast()
             }.create().show()
     }
 }
