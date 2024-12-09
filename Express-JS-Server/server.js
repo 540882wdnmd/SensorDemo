@@ -17,7 +17,7 @@ app.post('/post-json-data', (req, res) => {
   const postData = req.body;
 
   // 直接在终端显示 json 字串
-  console.log('Received json:', postData);
+  console.log('Received json:', JSON.stringify(postData, null, 2));
 
   // 返回成功响应
   res.sendStatus(200);
