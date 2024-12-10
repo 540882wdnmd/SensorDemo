@@ -43,27 +43,38 @@
             app:layout_constraintTop_toBottomOf="@id/time_tv" />
 
         <Button
-            android:id="@+id/pause_stop_btn"
+            android:id="@+id/start_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="50dp"
+            android:layout_marginBottom="50dp"
             android:backgroundTint="@color/dark_green"
             android:text="开始"
             android:textColor="@color/milky"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/view_btn"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/view_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dark_green"
+            android:text="预览"
+            android:textColor="@color/milky"
+            app:layout_constraintBottom_toBottomOf="@id/start_btn"
+            app:layout_constraintEnd_toStartOf="@id/finish_btn"
+            app:layout_constraintStart_toEndOf="@id/start_btn" />
 
         <Button
             android:id="@+id/finish_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="50dp"
             android:backgroundTint="@color/dark_green"
             android:text="停止"
             android:textColor="@color/milky"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
+            app:layout_constraintBottom_toBottomOf="@id/start_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/view_btn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

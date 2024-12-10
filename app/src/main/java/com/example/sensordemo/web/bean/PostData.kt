@@ -1,4 +1,4 @@
-package com.example.sensordemo.bean
+package com.example.sensordemo.web.bean
 
 import com.google.gson.annotations.SerializedName
 

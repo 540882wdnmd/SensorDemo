@@ -1,10 +1,11 @@
 package com.example.sensordemo.util
 
-import android.app.Activity
 import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Toast
+import com.p1ay1s.base.appContext
+import com.p1ay1s.base.extension.toast
 
 const val ALL_SENSORS = "All_Sensors"
 const val MOTION_SENSORS = "Motion_Sensors"
@@ -12,8 +13,10 @@ const val POSITION_SENSORS = "Position_Sensors"
 const val ENVIRONMENT_SENSORS = "Environment_Sensors"
 const val SUPPORT = "Support"
 
-fun Activity.cancelToast() {
-    Toast(this).cancel()
+fun Any?.toast2() {
+    Toast(appContext).cancel()
+    val str = this.toString()
+    if (str.isNotBlank()) toast(str)
 }
 
 fun SensorManager.registerSensorListeners(listener: SensorEventListener?) {

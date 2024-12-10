@@ -1,6 +1,6 @@
-package com.example.sensordemo
+package com.example.sensordemo.web
 
-import com.example.sensordemo.bean.PostData
+import com.example.sensordemo.web.bean.PostData
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -8,23 +8,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sensordemo.bean.AccNoBiasComp
-import com.example.sensordemo.bean.AccWithEstBiasComp
-import com.example.sensordemo.bean.Accelerometer
-import com.example.sensordemo.bean.GameRotationVector
-import com.example.sensordemo.bean.GeoIntHardBiasEst
-import com.example.sensordemo.bean.GeoIntUncal
-import com.example.sensordemo.bean.GeomagneticIntensity
-import com.example.sensordemo.bean.GeomagneticRotationVector
-import com.example.sensordemo.bean.GravityAcceleration
-import com.example.sensordemo.bean.LinearAcceleration
-import com.example.sensordemo.bean.Orientation
-import com.example.sensordemo.bean.PostData
-import com.example.sensordemo.bean.RotRateNoDriftComp
-import com.example.sensordemo.bean.RotRateWithEstDriftComp
-import com.example.sensordemo.bean.RotationRate
-import com.example.sensordemo.bean.RotationVectorComponent
-import com.example.sensordemo.bean.SensorData
+import com.example.sensordemo.web.bean.AccNoBiasComp
+import com.example.sensordemo.web.bean.AccWithEstBiasComp
+import com.example.sensordemo.web.bean.Accelerometer
+import com.example.sensordemo.web.bean.GameRotationVector
+import com.example.sensordemo.web.bean.GeoIntHardBiasEst
+import com.example.sensordemo.web.bean.GeoIntUncal
+import com.example.sensordemo.web.bean.GeomagneticIntensity
+import com.example.sensordemo.web.bean.GeomagneticRotationVector
+import com.example.sensordemo.web.bean.GravityAcceleration
+import com.example.sensordemo.web.bean.LinearAcceleration
+import com.example.sensordemo.web.bean.Orientation
+import com.example.sensordemo.web.bean.PostData
+import com.example.sensordemo.web.bean.RotRateNoDriftComp
+import com.example.sensordemo.web.bean.RotRateWithEstDriftComp
+import com.example.sensordemo.web.bean.RotationRate
+import com.example.sensordemo.web.bean.RotationVectorComponent
+import com.example.sensordemo.web.bean.SensorData
 import com.example.sensordemo.util.MOTION_SENSORS
 import com.example.sensordemo.util.POSITION_SENSORS
 import com.example.sensordemo.util.SensorRecordTimer
@@ -97,17 +97,22 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun postJsonData(id: String, callback: (Boolean, String) -> Unit) {
-        if (sensorDataList.isEmpty()) {
-            callback(false, "未收集到数据")
-            return
-        }
-        val postData = PostData(
+    fun getPostData(id: String): PostData {
+        return PostData(
             id,
             timeString.value.toString(),
             sensorDataList,
             true
         )
+    }
+
+    fun postJsonData(id: String, callback: (Boolean, String) -> Unit) {
+        if (sensorDataList.isEmpty()) {
+            callback(false, "未收集到数据")
+            return
+        }
+        val postData = getPostData(id)
+
         mainModel.postJsonData(
             postData,
             { _ ->
