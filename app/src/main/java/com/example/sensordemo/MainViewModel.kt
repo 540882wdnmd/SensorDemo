@@ -8,6 +8,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sensordemo.util.MOTION_SENSORS
+import com.example.sensordemo.util.POSITION_SENSORS
+import com.example.sensordemo.util.SensorRecordTimer
 import com.example.sensordemo.web.bean.AccNoBiasComp
 import com.example.sensordemo.web.bean.AccWithEstBiasComp
 import com.example.sensordemo.web.bean.Accelerometer
@@ -25,14 +28,12 @@ import com.example.sensordemo.web.bean.RotRateWithEstDriftComp
 import com.example.sensordemo.web.bean.RotationRate
 import com.example.sensordemo.web.bean.RotationVectorComponent
 import com.example.sensordemo.web.bean.SensorData
-import com.example.sensordemo.util.MOTION_SENSORS
-import com.example.sensordemo.util.POSITION_SENSORS
-import com.example.sensordemo.util.SensorRecordTimer
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -78,6 +79,8 @@ class MainViewModel : ViewModel() {
 
     private var sensorDataList: MutableList<SensorData> = mutableListOf()
 
+    private val gson = GsonBuilder().setPrettyPrinting().create()
+
     init {
         initSensorTimer()
         viewModelScope.launch(Dispatchers.IO) {
@@ -97,14 +100,26 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getPostData(id: String): PostData {
-        return PostData(
-            id,
-            timeString.value.toString(),
-            sensorDataList,
-            true
-        )
+    /**
+     * 解析对象为格式化 json 字串, 然后在主线程回调
+     *
+     * 本来以为这个格式化久导致 dialog 延迟很久才出来, 结果发现可能是因为字串比较长渲染的比较久
+     */
+    fun parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val json = gson.toJson(obj)
+            withContext(Dispatchers.Main) {
+                callback(json)
+            }
+        }
     }
+
+    fun getPostData(id: String): PostData = PostData(
+        id,
+        timeString.value.toString(),
+        sensorDataList,
+        true
+    )
 
     fun postJsonData(id: String, callback: (Boolean, String) -> Unit) {
         if (sensorDataList.isEmpty()) {
@@ -116,7 +131,9 @@ class MainViewModel : ViewModel() {
         mainModel.postJsonData(
             postData,
             { _ ->
-                callback(true, Gson().toJson(postData))
+                parseToPrettyJson(postData) {
+                    callback(true, it)
+                }
             }, // on success
             { code, _ ->
                 val msg = code ?: "请求超时"

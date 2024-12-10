@@ -8,11 +8,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sensordemo.MainViewModel.Companion.CD
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.ui.LoadingDialog
-import com.example.sensordemo.util.formatJson
 import com.example.sensordemo.util.registerSensorListeners
 import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.Gson
 import com.p1ay1s.vbclass.ViewBindingActivity
 
 @SuppressLint("SetTextI18n")
@@ -52,12 +50,13 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 requireID {
                     dialog.show() // 显示 process bar
                     postJsonData(id) { isSuccess, msg ->
-                        dialog.hide() // 隐藏 process bar
-                        if (isSuccess) {
+                        if (isSuccess) { // 网络请求成功
                             resetTimer()
                             cleanDataList()
-                            showSimpleDialog("以下数据已上传", formatJson(msg))
+                            dialog.hide() // 隐藏 process bar
+                            showSimpleDialog("以下数据已上传", msg)
                         } else {
+                            dialog.hide() // 隐藏 process bar
                             "提交失败: $msg".toast2()
                         }
                     }
@@ -71,10 +70,12 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 }
 
                 val postData = getPostData(id)
-                val json = formatJson(Gson().toJson(postData))
-                val msg =
-                    if (postData.data.isNullOrEmpty()) "未收集到数据" else json
-                showSimpleDialog("将要上传以下数据", msg)
+
+                if (postData.data.isNullOrEmpty()) {
+                    showSimpleDialog("还未收集到数据")
+                } else {
+                    showJsonDialog("将要上传以下数据", postData)
+                }
             }
         }
     }
@@ -82,6 +83,17 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(mainViewModel.listener)
+    }
+
+    /**
+     * 加载对象为格式化的 json 并用 dialog 展示
+     */
+    private fun showJsonDialog(title: String, obj: Any?) {
+        dialog.show()
+        mainViewModel.parseToPrettyJson(obj) {
+            dialog.hide()
+            showSimpleDialog(title, it)
+        }
     }
 
     private fun showSimpleDialog(title: String = "", msg: String = "") {
