@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.sensordemo.util.MOTION_SENSORS
 import com.example.sensordemo.util.POSITION_SENSORS
 import com.example.sensordemo.util.SensorRecordTimer
+import com.example.sensordemo.util.parseToPrettyJson
 import com.example.sensordemo.web.bean.AccNoBiasComp
 import com.example.sensordemo.web.bean.AccWithEstBiasComp
 import com.example.sensordemo.web.bean.Accelerometer
@@ -28,35 +29,64 @@ import com.example.sensordemo.web.bean.RotRateWithEstDriftComp
 import com.example.sensordemo.web.bean.RotationRate
 import com.example.sensordemo.web.bean.RotationVectorComponent
 import com.example.sensordemo.web.bean.SensorData
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainViewModel : ViewModel() {
     companion object {
-        private const val REFRESH_CD = 10L // 刷新间隔
+        private const val REFRESH_CD = 30L // 刷新间隔
         private const val CHECK_CD = 100L // 检查间隔
-        const val CD = 500L //收集数据的间隔时间
+
+        private const val INIT_CD = 500L
     }
 
-    private val timerAccelerometer = SensorRecordTimer(CD)
-    private val timerAccelerometerUncalibrated = SensorRecordTimer(CD)
-    private val timerGravity = SensorRecordTimer(CD)
-    private val timerGyroscope = SensorRecordTimer(CD)
-    private val timerGyroscopeUncalibrated = SensorRecordTimer(CD)
-    private val timerLinearAcceleration = SensorRecordTimer(CD)
-    private val timerRotationVector = SensorRecordTimer(CD)
-    private val timerGameRotationVector = SensorRecordTimer(CD)
-    private val timerGeomagneticRotationVector = SensorRecordTimer(CD)
-    private val timerMagneticField = SensorRecordTimer(CD)
-    private val timerMagneticFieldUncalibrated = SensorRecordTimer(CD)
-    private val timerOrientation = SensorRecordTimer(CD)
-    private val timerProximity = SensorRecordTimer(CD)
+    private val _timeString = MutableLiveData("00:00:00.000")
+    val timeString: LiveData<String>
+        get() = _timeString
+
+    private val _cdString = MutableLiveData("当前记录间隔: 每${INIT_CD}毫秒\n点击可以设置")
+    val cdString: LiveData<String>
+        get() = _cdString
+
+    private val timerAccelerometer = SensorRecordTimer(INIT_CD)
+    private val timerAccelerometerUncalibrated = SensorRecordTimer(INIT_CD)
+    private val timerGravity = SensorRecordTimer(INIT_CD)
+    private val timerGyroscope = SensorRecordTimer(INIT_CD)
+    private val timerGyroscopeUncalibrated = SensorRecordTimer(INIT_CD)
+    private val timerLinearAcceleration = SensorRecordTimer(INIT_CD)
+    private val timerRotationVector = SensorRecordTimer(INIT_CD)
+    private val timerGameRotationVector = SensorRecordTimer(INIT_CD)
+    private val timerGeomagneticRotationVector = SensorRecordTimer(INIT_CD)
+    private val timerMagneticField = SensorRecordTimer(INIT_CD)
+    private val timerMagneticFieldUncalibrated = SensorRecordTimer(INIT_CD)
+    private val timerOrientation = SensorRecordTimer(INIT_CD)
+    private val timerProximity = SensorRecordTimer(INIT_CD)
+
+    var CD = INIT_CD // 收集数据的间隔时间
+        set(value) {
+            if (value !in 1L..10000L) return // 限定在合理的范围内
+            _cdString.value = "当前记录间隔: 每${value}毫秒\n点击可以设置"
+            timerAccelerometer.cd = value
+            timerAccelerometerUncalibrated.cd = value
+            timerGravity.cd = value
+            timerGyroscope.cd = value
+            timerGyroscopeUncalibrated.cd = value
+            timerLinearAcceleration.cd = value
+            timerRotationVector.cd = value
+            timerGameRotationVector.cd = value
+            timerGeomagneticRotationVector.cd = value
+            timerMagneticField.cd = value
+            timerMagneticFieldUncalibrated.cd = value
+            timerOrientation.cd = value
+            timerProximity.cd = value
+            resetTimer()
+            cleanDataList()
+            field = value
+        }
 
     private val sensorData = SensorData()
 
@@ -69,17 +99,11 @@ class MainViewModel : ViewModel() {
     val isRunning: Boolean
         get() = _isRunning
 
-    private val _timeString = MutableLiveData("00:00:00.000")
-    val timeString: LiveData<String>
-        get() = _timeString
-
     private val mainModel: MainModel by lazy { MainModel() }
 
     val listener = SensorEventListenerImpl()
 
     private var sensorDataList: MutableList<SensorData> = mutableListOf()
-
-    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     init {
         initSensorTimer()
@@ -90,26 +114,11 @@ class MainViewModel : ViewModel() {
                     val now = System.currentTimeMillis()
                     if (now - lastRecordTime >= CD) {
                         sensorData.time = System.currentTimeMillis()
-//                        sensorData.time = LocalTime.now().toString()
                         sensorDataList.add(sensorData)
                         lastRecordTime = System.currentTimeMillis()
                     }
                     delay(CHECK_CD)
                 }
-            }
-        }
-    }
-
-    /**
-     * 解析对象为格式化 json 字串, 然后在主线程回调
-     *
-     * 本来以为这个格式化久导致 dialog 延迟很久才出来, 结果发现可能是因为字串比较长渲染的比较久
-     */
-    fun parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val json = gson.toJson(obj)
-            withContext(Dispatchers.Main) {
-                callback(json)
             }
         }
     }
@@ -131,7 +140,7 @@ class MainViewModel : ViewModel() {
         mainModel.postJsonData(
             postData,
             { _ ->
-                parseToPrettyJson(postData) {
+                viewModelScope.parseToPrettyJson(postData) {
                     callback(true, it)
                 }
             }, // on success
@@ -400,12 +409,9 @@ class MainViewModel : ViewModel() {
                 }
 
             }
-
-
         }
 
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
         }
     }
 }

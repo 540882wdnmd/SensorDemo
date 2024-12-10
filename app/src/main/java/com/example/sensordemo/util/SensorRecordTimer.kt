@@ -7,13 +7,12 @@ import android.util.Log
  * 具体的记录逻辑可通过 callback 设置
  * @param cd 规定的冷却时间(多久允许记录一次)
  */
-class SensorRecordTimer(private val cd: Long) {
+class SensorRecordTimer(var cd: Long) {
     private var lastRecordTime = 0L
     private var lastRecordedValues: FloatArray? = null
     val values: FloatArray?
         get() = lastRecordedValues
     private var callback: ((values: FloatArray) -> Unit)? = null
-
 
     /**
      * 达到冷却时间或选择强制记录时调用 callback

@@ -4,8 +4,13 @@ import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Toast
+import com.google.gson.GsonBuilder
 import com.p1ay1s.base.appContext
 import com.p1ay1s.base.extension.toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val ALL_SENSORS = "All_Sensors"
 const val MOTION_SENSORS = "Motion_Sensors"
@@ -17,6 +22,21 @@ fun Any?.toast2() {
     Toast(appContext).cancel()
     val str = this.toString()
     if (str.isNotBlank()) toast(str)
+}
+
+/**
+ * 解析对象为格式化 json 字串, 然后在主线程回调
+ *
+ * 本来以为这个格式化久导致 dialog 延迟很久才出来, 结果发现可能是因为字串比较长渲染的比较久
+ */
+fun CoroutineScope.parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
+    launch(Dispatchers.IO) {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val json = gson.toJson(obj)
+        withContext(Dispatchers.Main) {
+            callback(json)
+        }
+    }
 }
 
 fun SensorManager.registerSensorListeners(listener: SensorEventListener?) {

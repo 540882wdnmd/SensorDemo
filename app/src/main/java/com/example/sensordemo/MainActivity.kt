@@ -5,9 +5,10 @@ import android.hardware.SensorManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
-import com.example.sensordemo.MainViewModel.Companion.CD
+import androidx.lifecycle.lifecycleScope
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.ui.LoadingDialog
+import com.example.sensordemo.util.parseToPrettyJson
 import com.example.sensordemo.util.registerSensorListeners
 import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,10 +33,29 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
-        cdTv.text = "当前记录间隔: 每${CD}毫秒"
         sensorManager.registerSensorListeners(mainViewModel.listener)
 
         mainViewModel.apply {
+            cdTv.setOnClickListener {
+                if (isRunning) {
+                    "请先暂停".toast2()
+                    return@setOnClickListener
+                }
+
+                showInputDialog("设置一个新的值", "", "",
+                    { str ->
+                        try {
+                            val num = str.toString().toLong()
+                            if (num in 1L..10000L)  // 限定在合理的范围内
+                                CD = num
+                            else
+                                "必须设置在 1~10000 之间".toast2()
+                        } catch (_: Exception) {
+                            "必须设置为一个长整型数".toast2()
+                        }
+                    })
+            }
+
             startBtn.setOnClickListener {
                 startPauseTimer()
                 startBtn.text = if (isRunning) "暂停" else "开始"
@@ -70,7 +90,6 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                 }
 
                 val postData = getPostData(id)
-
                 if (postData.data.isNullOrEmpty()) {
                     showSimpleDialog("还未收集到数据")
                 } else {
@@ -90,10 +109,61 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
      */
     private fun showJsonDialog(title: String, obj: Any?) {
         dialog.show()
-        mainViewModel.parseToPrettyJson(obj) {
+        lifecycleScope.parseToPrettyJson(obj) {
             dialog.hide()
             showSimpleDialog(title, it)
         }
+    }
+
+
+    /**
+     * 仅满足上传条件才回调
+     */
+    private fun requireID(callback: () -> Unit) {
+        showInputDialog("数据提交", "输入你的学号", "请输入学号",
+            { str ->
+                if (str.isNullOrEmpty()) {
+                    "学号不可留空, 请重新提交".toast2()
+                } else {
+                    id = str.toString()
+                    callback()
+                }
+            }, {
+                "已取消提交".toast2()
+            })
+    }
+
+    private fun showInputDialog(
+        title: String = "",
+        msg: String = "",
+        hint: String = "",
+        onConfirmed: ((CharSequence?) -> Unit) = {},
+        onCancel: (() -> Unit) = {}
+    ) {
+        if (isShowing) return
+        isShowing = true
+
+        val editText = EditText(this).also {
+            it.hint = hint
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(msg)
+            .setCancelable(true)
+            .setView(editText)
+            .setPositiveButton("确认") { _, _ ->
+                isShowing = false
+                onConfirmed(editText.text)
+            }
+            .setNegativeButton("取消") { _, _ ->
+                isShowing = false
+                onCancel()
+            }
+            .setOnCancelListener {
+                isShowing = false
+                onCancel()
+            }.create().show()
     }
 
     private fun showSimpleDialog(title: String = "", msg: String = "") {
@@ -104,41 +174,5 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
             .setPositiveButton("确认") { _, _ ->
             }.create()
             .show()
-    }
-
-    /**
-     * 仅满足上传条件才回调
-     */
-    private fun requireID(callback: () -> Unit) {
-        if (isShowing) return
-        isShowing = true
-
-        val editText = EditText(this).also {
-            it.hint = "请输入学号"
-        }
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("数据提交")
-            .setMessage("输入你的学号")
-            .setCancelable(true)
-            .setView(editText)
-            .setPositiveButton("确认") { _, _ ->
-                val str = editText.text
-                if (str.isNullOrEmpty()) {
-                    "学号不可留空, 请重新提交".toast2()
-                } else {
-                    id = editText.text.toString()
-                    callback()
-                }
-                isShowing = false
-            }
-            .setNegativeButton("取消") { _, _ ->
-                "已取消提交".toast2()
-                isShowing = false
-            }
-            .setOnCancelListener {
-                "已取消提交".toast2()
-                isShowing = false
-            }.create().show()
     }
 }
