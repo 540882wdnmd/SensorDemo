@@ -4,6 +4,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Toast
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.p1ay1s.base.appContext
 import com.p1ay1s.base.extension.toast
 
@@ -12,6 +14,12 @@ const val MOTION_SENSORS = "Motion_Sensors"
 const val POSITION_SENSORS = "Position_Sensors"
 const val ENVIRONMENT_SENSORS = "Environment_Sensors"
 const val SUPPORT = "Support"
+
+fun formatJson(jsonString: String): String {
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    val je = JsonParser.parseString(jsonString)
+    return gson.toJson(je)
+}
 
 fun Any?.toast2() {
     Toast(appContext).cancel()
