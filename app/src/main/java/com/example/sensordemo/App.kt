@@ -10,9 +10,9 @@ import com.p1ay1s.util.ServiceBuilder
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        appContext = this
         LOG_LEVEL = ERROR
         ServiceBuilder.enableLogger = true
-        appBaseUrl = "http://10.33.39.138:3000/"
-        appContext = this
+        appBaseUrl = BASE
     }
 }

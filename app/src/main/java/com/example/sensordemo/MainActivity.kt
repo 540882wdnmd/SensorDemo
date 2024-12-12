@@ -14,6 +14,9 @@ import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.vbclass.ViewBindingActivity
 
+//const val BASE = "http://192.168.171.128:7172/"
+const val BASE = "https://681695024398f8.lhr.life/"
+
 @SuppressLint("SetTextI18n")
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
