@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.p1ay1s.base.appContext
 import com.p1ay1s.base.extension.toast
+import com.p1ay1s.base.log.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +35,7 @@ fun CoroutineScope.parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
         val gson = GsonBuilder().setPrettyPrinting().create()
         val json = gson.toJson(obj)
         withContext(Dispatchers.Main) {
+            logE("JSON", json)
             callback(json)
         }
     }

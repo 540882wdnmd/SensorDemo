@@ -12,7 +12,7 @@ material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
 databindingRuntime = "8.7.3"
-zephyr = "2.1.1"
+zephyr = "2.1.2"
 retrofit = "2.11.0"
 
 [libraries]

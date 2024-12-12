@@ -14,8 +14,8 @@ import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.vbclass.ViewBindingActivity
 
-//const val BASE = "http://192.168.171.128:7172/"
-const val BASE = "https://681695024398f8.lhr.life/"
+//const val BASE = "http://10.21.32.252:7172/"
+const val BASE = "https://c45402308c4a71.lhr.life//"
 
 @SuppressLint("SetTextI18n")
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
@@ -72,7 +72,12 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
                 requireID {
                     dialog.show() // 显示 process bar
-                    postJsonData(id) { isSuccess, msg ->
+                    val toId = try {
+                        id.toLong()
+                    } catch (_: Exception) {
+                        -1
+                    }
+                    postJsonData(toId) { isSuccess, msg ->
                         if (isSuccess) { // 网络请求成功
                             resetTimer()
                             cleanDataList()
@@ -91,8 +96,12 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                     "请先暂停".toast2()
                     return@setOnClickListener
                 }
-
-                val postData = getPostData(id)
+                val toId = try {
+                    id.toLong()
+                } catch (_: Exception) {
+                    -1
+                }
+                val postData = getPostData(toId)
                 if (postData.data.isNullOrEmpty()) {
                     showSimpleDialog("还未收集到数据")
                 } else {

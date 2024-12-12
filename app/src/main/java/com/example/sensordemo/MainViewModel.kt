@@ -123,14 +123,18 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getPostData(id: String): PostData = PostData(
-        id,
-        timeString.value.toString(),
-        sensorDataList,
-        true
-    )
+    fun getPostData(id: Long): PostData {
+        val time = elapsedTime.toTimeFormat(false)
 
-    fun postJsonData(id: String, callback: (Boolean, String) -> Unit) {
+        return PostData(
+            id,
+            time,
+            sensorDataList,
+            true
+        )
+    }
+
+    fun postJsonData(id: Long, callback: (Boolean, String) -> Unit) {
         if (sensorDataList.isEmpty()) {
             callback(false, "未收集到数据")
             return
@@ -143,9 +147,11 @@ class MainViewModel : ViewModel() {
                 viewModelScope.parseToPrettyJson(postData) {
                     callback(true, it)
                 }
+                Log.e("XXXX", "ok")
             }, // on success
-            { code, _ ->
-                val msg = code ?: "请求超时"
+            { code, mg ->
+                val msg = code ?: "无状态码, 问题是: $mg"
+                Log.e("XXXX", mg)
                 callback(false, msg.toString())
             } // on error. 状态码可空
         )
@@ -171,7 +177,7 @@ class MainViewModel : ViewModel() {
         timerJob = viewModelScope.launch(Dispatchers.Main) {
             while (true) {
                 elapsedTime = System.currentTimeMillis() - startTime
-                _timeString.value = elapsedTime.toTimeFormat()
+                _timeString.value = elapsedTime.toTimeFormat(true)
                 delay(REFRESH_CD)
             }
         }
@@ -194,20 +200,32 @@ class MainViewModel : ViewModel() {
         sensorDataList.clear()
     }
 
-    private fun Long.toTimeFormat(): String {
+    /**
+     * 分为是否带毫秒
+     */
+    private fun Long.toTimeFormat(withMS: Boolean): String {
         val hours = TimeUnit.MILLISECONDS.toHours(this)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(this) % 60
         val seconds = TimeUnit.MILLISECONDS.toSeconds(this) % 60
         val milliseconds = this % 1000
 
-        return String.format(
-            Locale.CHINA,
-            "%02d:%02d:%02d.%03d",
-            hours,
-            minutes,
-            seconds,
-            milliseconds
-        )
+        if (withMS) {
+            return String.format(
+                Locale.CHINA,
+                "%02d:%02d:%02d.%03d",
+                hours,
+                minutes,
+                seconds, milliseconds
+            )
+        } else {
+            return String.format(
+                Locale.CHINA,
+                "%02d:%02d:%02d",
+                hours,
+                minutes,
+                seconds
+            )
+        }
     }
 
     /*
