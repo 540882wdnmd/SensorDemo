@@ -14,7 +14,8 @@ import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.vbclass.ViewBindingActivity
 
-const val BASE = "http://10.21.32.252:7172/" // 这个是后台工位上的服务器, 连着工作室的 wifi 就可以访问到, 现在后台没写状态码所以会超时, 实际上他那边是可以收到的
+const val BASE =
+    "http://10.21.32.252:7172/" // 这个是后台工位上的服务器, 连着工作室的 wifi 就可以访问到, 现在后台没写状态码所以会超时, 实际上他那边是可以收到的
 
 @SuppressLint("SetTextI18n")
 class MainActivity : ViewBindingActivity<ActivityMainBinding>() {

@@ -4,10 +4,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Toast
-import com.google.gson.GsonBuilder
 import com.p1ay1s.base.appContext
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.base.log.logE
+import com.p1ay1s.util.toPrettyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,10 +32,9 @@ fun Any?.toast2() {
  */
 fun CoroutineScope.parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
     launch(Dispatchers.IO) {
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        val json = gson.toJson(obj)
+        val json = obj.toPrettyJson()
+        logE("JSON", json)
         withContext(Dispatchers.Main) {
-            logE("JSON", json)
             callback(json)
         }
     }
