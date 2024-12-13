@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SensorDemo" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryVariant">@color/dark_green</item>
+        <item name="colorOnPrimary">@color/dark_green</item>
+        <item name="colorSecondary">@color/milky</item>
+        <item name="colorSecondaryVariant">@color/milky</item>
+
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!--图标背景色-->
+        <item name="android:windowSplashScreenIconBackgroundColor">?attr/colorPrimary</item>
+        <!--底色-->
+        <item name="android:windowSplashScreenBackground">?attr/colorPrimaryVariant</item>
+        <!--图标-->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <!--下方图标-->
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>

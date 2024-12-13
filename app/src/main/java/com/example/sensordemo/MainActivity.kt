@@ -2,16 +2,18 @@ package com.example.sensordemo
 
 import android.annotation.SuppressLint
 import android.hardware.SensorManager
+import android.os.Build
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.sensordemo.databinding.ActivityMainBinding
 import com.example.sensordemo.ui.LoadingDialog
 import com.example.sensordemo.util.parseToPrettyJson
 import com.example.sensordemo.util.registerSensorListeners
-import com.example.sensordemo.util.toast2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity
 
 const val BASE =
@@ -27,8 +29,25 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     private lateinit var dialog: LoadingDialog
     private var isShowing = false
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun ActivityMainBinding.initBinding() {
         enableEdgeToEdge()
+
+//        splashScreen.setOnExitAnimationListener { splashScreenView ->
+//            val slideUp = ObjectAnimator.ofFloat(
+//                splashScreenView,
+//                View.TRANSLATION_Y,
+//                0f,
+//                -splashScreenView.height.toFloat()
+//            )
+//            slideUp.run {
+//                interpolator = AnticipateInterpolator()
+//                duration = 100L
+//                doOnEnd { splashScreenView.remove() }
+//                start()
+//            }
+//        }
+
         dialog = LoadingDialog(this@MainActivity)
 
         viewModel = mainViewModel
@@ -41,7 +60,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
         mainViewModel.apply {
             cdTv.setOnClickListener {
                 if (isRunning) {
-                    "请先暂停".toast2()
+                    "请先暂停".toast()
                     return@setOnClickListener
                 }
 
@@ -52,9 +71,9 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                             if (num in 1L..10000L)  // 限定在合理的范围内
                                 CD = num
                             else
-                                "必须设置在 1~10000 之间".toast2()
+                                "必须设置在 1~10000 之间".toast()
                         } catch (_: Exception) {
-                            "必须设置为一个长整型数".toast2()
+                            "必须设置为一个长整型数".toast()
                         }
                     })
             }
@@ -66,7 +85,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
             finishBtn.setOnClickListener {
                 if (isRunning) {
-                    "请先暂停".toast2()
+                    "请先暂停".toast()
                     return@setOnClickListener
                 }
 
@@ -85,7 +104,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                             showSimpleDialog("以下数据已上传", msg)
                         } else {
                             dialog.hide() // 隐藏 process bar
-                            "提交失败: $msg".toast2()
+                            "提交失败: $msg".toast()
                         }
                     }
                 }
@@ -93,7 +112,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
 
             viewBtn.setOnClickListener {
                 if (isRunning) {
-                    "请先暂停".toast2()
+                    "请先暂停".toast()
                     return@setOnClickListener
                 }
                 val toId = try {
@@ -102,7 +121,7 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
                     -1
                 }
                 val postData = getPostData(toId)
-                if (postData.data.isNullOrEmpty()) {
+                if (postData.data.isEmpty()) {
                     showSimpleDialog("还未收集到数据")
                 } else {
                     showJsonDialog("将要上传以下数据", postData)
@@ -135,13 +154,13 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
         showInputDialog("数据提交", "输入你的学号", "请输入学号",
             { str ->
                 if (str.isNullOrEmpty()) {
-                    "学号不可留空, 请重新提交".toast2()
+                    "学号不可留空, 请重新提交".toast()
                 } else {
                     id = str.toString()
                     callback()
                 }
             }, {
-                "已取消提交".toast2()
+                "已取消提交".toast()
             })
     }
 
