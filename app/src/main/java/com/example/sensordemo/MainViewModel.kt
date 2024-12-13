@@ -29,6 +29,7 @@ import com.example.sensordemo.web.bean.RotRateWithEstDriftComp
 import com.example.sensordemo.web.bean.RotationRate
 import com.example.sensordemo.web.bean.RotationVectorComponent
 import com.example.sensordemo.web.bean.SensorData
+import com.p1ay1s.base.extension.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -143,15 +144,15 @@ class MainViewModel : ViewModel() {
 
         mainModel.postJsonData(
             postData,
-            { _ ->
+            { answer ->
                 viewModelScope.parseToPrettyJson(postData) {
                     callback(true, it)
                 }
-                Log.e("XXXX", "ok")
+                Log.e(TAG, answer?.data.toString())
             }, // on success
             { code, mg ->
                 val msg = code ?: "无状态码, 问题是: $mg"
-                Log.e("XXXX", mg)
+                Log.e(TAG, mg)
                 callback(false, msg.toString())
             } // on error. 状态码可空
         )

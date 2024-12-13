@@ -5,6 +5,37 @@ import com.google.gson.annotations.SerializedName
 private const val INIT_VALUE = -666.666F
 
 /**
+ * 英文版本
+ */
+data class PostData(
+    val id: Long, // 学号
+    val time: String, // 跑步时间
+    val data: List<SensorData?>, // 传感器数据 (五秒收集一次)
+    val tag: Boolean // 标记数据状态
+)
+
+data class SensorData(
+    var time: Long = -1,
+    var accelerometer: Accelerometer = Accelerometer(), // 加速度 (包含重力)
+    var accNoBiasComp: AccNoBiasComp = AccNoBiasComp(), // 加速度 (没有偏差补偿)
+    var accWithEstBiasComp: AccWithEstBiasComp = AccWithEstBiasComp(), // 加速度 (估算偏差补偿)
+    var gravityAcceleration: GravityAcceleration = GravityAcceleration(), // 重力加速度
+    var rotationRate: RotationRate = RotationRate(), // 旋转速率
+    var rotRateNoDriftComp: RotRateNoDriftComp = RotRateNoDriftComp(), // 旋转速率 (无漂移补偿)
+    var rotRateWithEstDriftComp: RotRateWithEstDriftComp = RotRateWithEstDriftComp(), // 旋转速率 (估算漂移补偿)
+    var linearAcceleration: LinearAcceleration = LinearAcceleration(), // 线性加速度
+    var rotationVectorComponent: RotationVectorComponent = RotationVectorComponent(), // 旋转矢量分量
+    var gameRotationVector: GameRotationVector = GameRotationVector(), // 游戏旋转矢量
+    var geomagneticRotationVector: GeomagneticRotationVector = GeomagneticRotationVector(), // 地磁旋转矢量
+    var geomagneticIntensity: GeomagneticIntensity = GeomagneticIntensity(), // 地磁强度
+    var geoIntUncal: GeoIntUncal = GeoIntUncal(), // 地磁强度无硬铁校准
+    var geoIntHardBiasEst: GeoIntHardBiasEst = GeoIntHardBiasEst(), // 地磁强度硬铁估算
+    var orientation: Orientation = Orientation(), // 方位角
+    var proximity: Float = -1F // 与物体距离
+)
+
+
+/**
  * 中文版本
  */
 data class _PostData(
@@ -53,36 +84,6 @@ data class _SensorData(
     var orientation: Orientation, // 方位角
     @SerializedName("与物体距离")
     var proximity: Float // 与物体距离
-)
-
-/**
- * 英文版本
- */
-data class PostData(
-    val id: Long, // 学号
-    val time: String, // 跑步时间
-    val data: List<SensorData?>, // 传感器数据 (五秒收集一次)
-    val tag: Boolean // 标记数据状态
-)
-
-data class SensorData(
-    var time: Long = -1,
-    var accelerometer: Accelerometer = Accelerometer(), // 加速度 (包含重力)
-    var accNoBiasComp: AccNoBiasComp = AccNoBiasComp(), // 加速度 (没有偏差补偿)
-    var accWithEstBiasComp: AccWithEstBiasComp = AccWithEstBiasComp(), // 加速度 (估算偏差补偿)
-    var gravityAcceleration: GravityAcceleration = GravityAcceleration(), // 重力加速度
-    var rotationRate: RotationRate = RotationRate(), // 旋转速率
-    var rotRateNoDriftComp: RotRateNoDriftComp = RotRateNoDriftComp(), // 旋转速率 (无漂移补偿)
-    var rotRateWithEstDriftComp: RotRateWithEstDriftComp = RotRateWithEstDriftComp(), // 旋转速率 (估算漂移补偿)
-    var linearAcceleration: LinearAcceleration = LinearAcceleration(), // 线性加速度
-    var rotationVectorComponent: RotationVectorComponent = RotationVectorComponent(), // 旋转矢量分量
-    var gameRotationVector: GameRotationVector = GameRotationVector(), // 游戏旋转矢量
-    var geomagneticRotationVector: GeomagneticRotationVector = GeomagneticRotationVector(), // 地磁旋转矢量
-    var geomagneticIntensity: GeomagneticIntensity = GeomagneticIntensity(), // 地磁强度
-    var geoIntUncal: GeoIntUncal = GeoIntUncal(), // 地磁强度无硬铁校准
-    var geoIntHardBiasEst: GeoIntHardBiasEst = GeoIntHardBiasEst(), // 地磁强度硬铁估算
-    var orientation: Orientation = Orientation(), // 方位角
-    var proximity: Float = -1F // 与物体距离
 )
 
 data class Accelerometer(

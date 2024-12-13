@@ -24,7 +24,7 @@ const val SUPPORT = "Support"
 fun CoroutineScope.parseToPrettyJson(obj: Any?, callback: (String) -> Unit) {
     launch(Dispatchers.IO) {
         val json = obj.toPrettyJson()
-        logE("JSON", json)
+        logE("Json", json)
         withContext(Dispatchers.Main) {
             callback(json)
         }

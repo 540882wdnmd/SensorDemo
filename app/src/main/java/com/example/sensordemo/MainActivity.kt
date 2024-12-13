@@ -1,11 +1,15 @@
 package com.example.sensordemo
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.hardware.SensorManager
 import android.os.Build
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.core.animation.doOnEnd
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.sensordemo.databinding.ActivityMainBinding
@@ -33,20 +37,20 @@ class MainActivity : ViewBindingActivity<ActivityMainBinding>() {
     override fun ActivityMainBinding.initBinding() {
         enableEdgeToEdge()
 
-//        splashScreen.setOnExitAnimationListener { splashScreenView ->
-//            val slideUp = ObjectAnimator.ofFloat(
-//                splashScreenView,
-//                View.TRANSLATION_Y,
-//                0f,
-//                -splashScreenView.height.toFloat()
-//            )
-//            slideUp.run {
-//                interpolator = AnticipateInterpolator()
-//                duration = 100L
-//                doOnEnd { splashScreenView.remove() }
-//                start()
-//            }
-//        }
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val slideUp = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_Y,
+                0f,
+                -splashScreenView.height.toFloat()
+            )
+            slideUp.run {
+                interpolator = AnticipateInterpolator()
+                duration = 600L
+                doOnEnd { splashScreenView.remove() }
+                start()
+            }
+        }
 
         dialog = LoadingDialog(this@MainActivity)
 
