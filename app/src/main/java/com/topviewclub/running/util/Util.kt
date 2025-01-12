@@ -3,8 +3,8 @@ package com.topviewclub.running.util
 import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import com.p1ay1s.base.log.logE
-import com.p1ay1s.util.toPrettyJson
+import com.zephyr.base.log.logE
+import com.zephyr.util.toPrettyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

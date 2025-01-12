@@ -29,7 +29,7 @@ import com.topviewclub.running.web.bean.RotRateWithEstDriftComp
 import com.topviewclub.running.web.bean.RotationRate
 import com.topviewclub.running.web.bean.RotationVectorComponent
 import com.topviewclub.running.web.bean.SensorData
-import com.p1ay1s.base.extension.TAG
+import com.zephyr.base.extension.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
