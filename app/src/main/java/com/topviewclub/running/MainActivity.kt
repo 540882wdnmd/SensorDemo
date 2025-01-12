@@ -1,4 +1,4 @@
-package com.example.sensordemo
+package com.topviewclub.running
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -12,10 +12,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.animation.doOnEnd
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.sensordemo.databinding.ActivityMainBinding
-import com.example.sensordemo.ui.LoadingDialog
-import com.example.sensordemo.util.parseToPrettyJson
-import com.example.sensordemo.util.registerSensorListeners
+import com.topviewclub.running.databinding.ActivityMainBinding
+import com.topviewclub.running.ui.LoadingDialog
+import com.topviewclub.running.util.parseToPrettyJson
+import com.topviewclub.running.util.registerSensorListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.p1ay1s.base.extension.toast
 import com.p1ay1s.vbclass.ViewBindingActivity

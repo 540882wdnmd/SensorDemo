@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.sensordemo.MainViewModel" />
+            type="com.topviewclub.running.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
             android:layout_marginTop="100dp"
+            android:gravity="center"
             android:maxLines="1"
             android:text="@{viewModel.timeString}"
             android:textColor="@color/green"

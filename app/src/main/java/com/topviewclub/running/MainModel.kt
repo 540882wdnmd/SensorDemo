@@ -1,8 +1,8 @@
-package com.example.sensordemo
+package com.topviewclub.running
 
-import com.example.sensordemo.web.MainService
-import com.example.sensordemo.web.Response
-import com.example.sensordemo.web.bean.PostData
+import com.topviewclub.running.web.MainService
+import com.topviewclub.running.web.Response
+import com.topviewclub.running.web.bean.PostData
 import com.p1ay1s.util.ServiceBuilder
 import com.p1ay1s.util.ServiceBuilder.requestEnqueue
 

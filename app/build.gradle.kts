@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sensordemo"
+    namespace = "com.topviewclub.running"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.sensordemo"
+        applicationId = "com.topviewclub.running"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

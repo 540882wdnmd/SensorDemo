@@ -1,4 +1,4 @@
-package com.example.sensordemo
+package com.topviewclub.running
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.example.sensordemo
+package com.topviewclub.running
 
 import android.app.Application
 import com.p1ay1s.base.appBaseUrl

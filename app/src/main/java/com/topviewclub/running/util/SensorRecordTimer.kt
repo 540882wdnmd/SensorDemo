@@ -1,4 +1,4 @@
-package com.example.sensordemo.util
+package com.topviewclub.running.util
 
 import android.util.Log
 
